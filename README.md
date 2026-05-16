@@ -14,3 +14,5 @@ ACQUISITION:
 
 THE GOAL:
 A simple, lightweight way to have player-specific collectibles that are performance-friendly and don't require constant API syncing.
+
+Current way to optain is  via /give @p plushie-friends:plushie{BlockEntityTag:{PlushieOwner:"PLAYER NAME"}}
