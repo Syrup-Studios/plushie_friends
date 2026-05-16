@@ -17,6 +17,9 @@
 	"entrypoints": {
 		"main": [
 			"net.syrupstudios.PlushieFriends"
+		],
+		"client": [
+			"net.syrupstudios.client.PlushieFriendsClient"
 		]
 	},
 	"mixins": [],
