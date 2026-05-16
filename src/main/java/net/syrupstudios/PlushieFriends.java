@@ -15,7 +15,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.syrupstudios.block.DynamicPlushieBlock;
 import net.syrupstudios.block.entity.DynamicPlushieBlockEntity;
 import org.jetbrains.annotations.Nullable;
@@ -45,13 +44,11 @@ public class PlushieFriends implements ModInitializer {
 					if (blockEntityTag.contains("PlushieOwner")) {
 						String ownerName = "";
 
-						// Handle if PlushieOwner is a full CompoundTag (GameProfile)
 						if (blockEntityTag.contains("PlushieOwner", 10)) {
 							CompoundTag ownerTag = blockEntityTag.getCompound("PlushieOwner");
 							if (ownerTag.contains("Name", 8)) {
 								ownerName = ownerTag.getString("Name");
 							}
-							// Handle if PlushieOwner is a simple String
 						} else if (blockEntityTag.contains("PlushieOwner", 8)) {
 							ownerName = blockEntityTag.getString("PlushieOwner");
 						}
