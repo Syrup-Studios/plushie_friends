@@ -3,6 +3,7 @@ package net.syrupstudios.block.entity;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.Level;
@@ -16,6 +17,7 @@ public class DynamicPlushieBlockEntity extends BlockEntity {
     public static BlockEntityType<DynamicPlushieBlockEntity> TYPE;
 
     private GameProfile owner = null;
+    private ListTag lore = new ListTag();
     private boolean isResolving = false;
 
     public DynamicPlushieBlockEntity(BlockPos pos, BlockState state) {
@@ -43,6 +45,11 @@ public class DynamicPlushieBlockEntity extends BlockEntity {
                 this.owner = new GameProfile(null, name);
             }
         }
+        if (tag.contains("PlushieLore", 9)) {
+            this.lore = tag.getList("PlushieLore", 8);
+        } else {
+            this.lore = new ListTag();
+        }
     }
 
     @Override
@@ -52,6 +59,9 @@ public class DynamicPlushieBlockEntity extends BlockEntity {
             CompoundTag profileTag = new CompoundTag();
             NbtUtils.writeGameProfile(profileTag, this.owner);
             tag.put("PlushieOwner", profileTag);
+        }
+        if (this.lore != null && !this.lore.isEmpty()) {
+            tag.put("PlushieLore", this.lore);
         }
     }
 
