@@ -4,19 +4,25 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.syrupstudios.block.DynamicPlushieBlock;
 import net.syrupstudios.block.entity.DynamicPlushieBlockEntity;
+import net.syrupstudios.data.PlushieDataManager;
+import net.syrupstudios.loot.SetPlushieFunction;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +32,8 @@ import java.util.List;
 public class PlushieFriends implements ModInitializer {
 	public static final String MOD_ID = "plushie-friends";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+
+	public static LootItemFunctionType SET_PLUSHIE_FUNCTION;
 
 	public static final DynamicPlushieBlock PLUSHIE_BLOCK = new DynamicPlushieBlock(
 			FabricBlockSettings.copyOf(Blocks.WHITE_WOOL).noOcclusion()
@@ -57,6 +65,13 @@ public class PlushieFriends implements ModInitializer {
 							tooltip.add(Component.literal(ownerName).withStyle(ChatFormatting.AQUA));
 						}
 					}
+
+					if (blockEntityTag.contains("PlushieLore", 9)) {
+						ListTag loreList = blockEntityTag.getList("PlushieLore", 8);
+						for (int i = 0; i < loreList.size(); i++) {
+							tooltip.add(Component.literal(loreList.getString(i)).withStyle(ChatFormatting.GRAY));
+						}
+					}
 				}
 			}
 		}
@@ -71,6 +86,14 @@ public class PlushieFriends implements ModInitializer {
 				BuiltInRegistries.BLOCK_ENTITY_TYPE,
 				new ResourceLocation(MOD_ID, "plushie_be"),
 				FabricBlockEntityTypeBuilder.create(DynamicPlushieBlockEntity::new, PLUSHIE_BLOCK).build()
+		);
+
+		ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new PlushieDataManager());
+
+		SET_PLUSHIE_FUNCTION = Registry.register(
+				BuiltInRegistries.LOOT_FUNCTION_TYPE,
+				new ResourceLocation(MOD_ID, "set_plushie"),
+				new LootItemFunctionType(new SetPlushieFunction.Serializer())
 		);
 
 		LOGGER.info("Plushie Friends initialized successfully!");

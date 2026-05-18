@@ -1,0 +1,57 @@
+package net.syrupstudios.data;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.syrupstudios.PlushieFriends;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+
+public class PlushieDataManager extends SimpleJsonResourceReloadListener implements IdentifiableResourceReloadListener {
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+    private static final Map<ResourceLocation, PlushieDefinition> PLUSHIES = new HashMap<>();
+
+    public PlushieDataManager() {
+        super(GSON, "plushies");
+    }
+
+    @Override
+    protected void apply(Map<ResourceLocation, JsonElement> prepared, ResourceManager resourceManager, ProfilerFiller profiler) {
+        PLUSHIES.clear();
+        prepared.forEach((id, jsonElement) -> {
+            try {
+                JsonObject jsonObject = jsonElement.getAsJsonObject();
+                String ownerName = jsonObject.has("owner_name") ? jsonObject.get("owner_name").getAsString() : "";
+
+                List<String> lore = new ArrayList<>();
+                if (jsonObject.has("lore")) {
+                    jsonObject.getAsJsonArray("lore").forEach(element -> lore.add(element.getAsString()));
+                }
+
+                PLUSHIES.put(id, new PlushieDefinition(ownerName, lore));
+            } catch (Exception e) {
+                PlushieFriends.LOGGER.error("Failed to parse plushie data pack entry for {}", id, e);
+            }
+        });
+    }
+
+    @Override
+    public ResourceLocation getFabricId() {
+        return new ResourceLocation(PlushieFriends.MOD_ID, "plushies");
+    }
+
+    public static PlushieDefinition get(ResourceLocation id) {
+        return PLUSHIES.get(id);
+    }
+
+    public record PlushieDefinition(String ownerName, List<String> lore) {}
+}
