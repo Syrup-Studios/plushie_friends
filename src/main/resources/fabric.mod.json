@@ -3,9 +3,9 @@
 	"id": "plushie-friends",
 	"version": "${version}",
 	"name": "plushie friends",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "A plushie mod that allows you to add anybody skin as a plushie!",
 	"authors": [
-		"Me!"
+		"SodaSyrup"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
