@@ -15,3 +15,4 @@ Right now, you can spawn them in using this command:
 
 ```text
 /give @p plushie-friends:plushie{BlockEntityTag:{PlushieOwner:"PLAYER NAME"}}
+```
