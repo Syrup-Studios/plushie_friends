@@ -1,18 +1,17 @@
-## PLUSHIE MOD PLAN
+### Plushie Friends
 
-CORE CONCEPT:
-3D plushies that behave exactly like vanilla player heads—they "snapshot" a player's skin the moment they are generated.
+**Plushie Friends** is a simple Fabric mod that lets you turn players into cute, collectible 3D plushies to decorate your world!
 
-HOW IT WORKS:
-- Skin Logic: Pulls skin data from Mojang only when the plushie is first created.
-- The Snapshot: Once generated, the skin is LOCKED. If the player updates their skin later, the plushie does not change.
-- Refreshing: To get a plushie with a player's "new" skin, you just generate a new one.
+* **Skins Don't Change:** They work just like vanilla player heads. The plushie grabs a player's skin the moment it's made and locks it in. If that player updates their skin later, your plushie stays exactly the same as a neat little time capsule.
+* **Cute 3D Models:** The plushies have detailed little heads, bodies, arms, and legs that automatically turn to face whichever way you place them down.
+* **Name Tags:** Hovering over a plushie in your inventory shows the owner's name in a clean, colored text so you don't lose track of who is who.
+* **Great for Modpacks:** Fully supports datapacks, making it easy for pack creators add player plushies into loot chests.
 
-ACQUISITION:
-- Commands: Standard syntax: /give @p plushie{SkinOwner:"Name"}
-- Loot: Support for datapacks so they can be added to loot chests for modpacks.
+---
 
-THE GOAL:
-A simple, lightweight way to have player-specific collectibles that are performance-friendly and don't require constant API syncing.
+### How to Get Them
 
-Current way to optain is  via /give @p plushie-friends:plushie{BlockEntityTag:{PlushieOwner:"PLAYER NAME"}}
+Right now, you can spawn them in using this command:
+
+```text
+/give @p plushie-friends:plushie{BlockEntityTag:{PlushieOwner:"PLAYER NAME"}}
