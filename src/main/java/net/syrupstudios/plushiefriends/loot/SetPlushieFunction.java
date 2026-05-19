@@ -1,4 +1,4 @@
-package net.syrupstudios.loot;
+package net.syrupstudios.plushiefriends.loot;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
@@ -12,8 +12,8 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
-import net.syrupstudios.PlushieFriends;
-import net.syrupstudios.data.PlushieDataManager;
+import net.syrupstudios.plushiefriends.PlushieFriends;
+import net.syrupstudios.plushiefriends.data.PlushieDataManager;
 
 public class SetPlushieFunction extends LootItemConditionalFunction {
     private final ResourceLocation plushieId;

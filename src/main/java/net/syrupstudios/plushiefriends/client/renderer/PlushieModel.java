@@ -1,4 +1,4 @@
-package net.syrupstudios.client.renderer;
+package net.syrupstudios.plushiefriends.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;

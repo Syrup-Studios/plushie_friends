@@ -1,4 +1,4 @@
-package net.syrupstudios.data;
+package net.syrupstudios.plushiefriends.data;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.syrupstudios.PlushieFriends;
+import net.syrupstudios.plushiefriends.PlushieFriends;
 
 import java.util.HashMap;
 import java.util.Map;

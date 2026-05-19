@@ -1,4 +1,4 @@
-package net.syrupstudios;
+package net.syrupstudios.plushiefriends;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
@@ -19,10 +19,10 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
-import net.syrupstudios.block.DynamicPlushieBlock;
-import net.syrupstudios.block.entity.DynamicPlushieBlockEntity;
-import net.syrupstudios.data.PlushieDataManager;
-import net.syrupstudios.loot.SetPlushieFunction;
+import net.syrupstudios.plushiefriends.block.DynamicPlushieBlock;
+import net.syrupstudios.plushiefriends.block.entity.DynamicPlushieBlockEntity;
+import net.syrupstudios.plushiefriends.data.PlushieDataManager;
+import net.syrupstudios.plushiefriends.loot.SetPlushieFunction;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package net.syrupstudios.client.renderer;
+package net.syrupstudios.plushiefriends.client.renderer;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
@@ -17,9 +17,9 @@ import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
-import net.syrupstudios.PlushieFriends;
-import net.syrupstudios.block.DynamicPlushieBlock;
-import net.syrupstudios.block.entity.DynamicPlushieBlockEntity;
+import net.syrupstudios.plushiefriends.PlushieFriends;
+import net.syrupstudios.plushiefriends.block.DynamicPlushieBlock;
+import net.syrupstudios.plushiefriends.block.entity.DynamicPlushieBlockEntity;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;

@@ -1,4 +1,4 @@
-package net.syrupstudios.block.entity;
+package net.syrupstudios.plushiefriends.block.entity;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.core.BlockPos;

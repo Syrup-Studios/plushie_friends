@@ -16,10 +16,10 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"net.syrupstudios.PlushieFriends"
+			"net.syrupstudios.plushiefriends.PlushieFriends"
 		],
 		"client": [
-			"net.syrupstudios.client.PlushieFriendsClient"
+			"net.syrupstudios.plushiefriends.client.PlushieFriendsClient"
 		]
 	},
 	"mixins": [],

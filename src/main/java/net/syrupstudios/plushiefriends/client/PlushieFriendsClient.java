@@ -1,8 +1,7 @@
-package net.syrupstudios.client;
+package net.syrupstudios.plushiefriends.client;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.google.gson.JsonObject;
@@ -18,10 +17,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
-import net.syrupstudios.PlushieFriends;
-import net.syrupstudios.block.entity.DynamicPlushieBlockEntity;
-import net.syrupstudios.client.renderer.DynamicPlushieBlockEntityRenderer;
-import net.syrupstudios.client.renderer.PlushieModel;
+import net.syrupstudios.plushiefriends.PlushieFriends;
+import net.syrupstudios.plushiefriends.block.entity.DynamicPlushieBlockEntity;
+import net.syrupstudios.plushiefriends.client.renderer.DynamicPlushieBlockEntityRenderer;
+import net.syrupstudios.plushiefriends.client.renderer.PlushieModel;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
