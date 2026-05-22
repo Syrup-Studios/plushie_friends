@@ -1,23 +1,30 @@
 package net.syrupstudios.plushiefriends;
 
+import com.mojang.authlib.GameProfile;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.SkullBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.syrupstudios.plushiefriends.block.DynamicPlushieBlock;
 import net.syrupstudios.plushiefriends.block.entity.DynamicPlushieBlockEntity;
@@ -27,11 +34,14 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PlushieFriends implements ModInitializer {
 	public static final String MOD_ID = "plushie-friends";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+	private static final Map<String, GameProfile> RESOLVED_PROFILE_CACHE = new HashMap<>();
 
 	public static LootItemFunctionType SET_PLUSHIE_FUNCTION;
 
@@ -40,6 +50,19 @@ public class PlushieFriends implements ModInitializer {
 	);
 
 	public static final BlockItem PLUSHIE_ITEM = new BlockItem(PLUSHIE_BLOCK, new FabricItemSettings()) {
+		@Override
+		public void verifyTagAfterLoad(CompoundTag tag) {
+			super.verifyTagAfterLoad(tag);
+			resolvePlushieOwner(tag);
+		}
+
+		@Override
+		protected boolean updateCustomBlockEntityTag(BlockPos pos, Level level, @Nullable Player player, ItemStack stack, BlockState state) {
+			boolean updated = super.updateCustomBlockEntityTag(pos, level, player, stack, state);
+			applyCachedOwner(level, pos, state);
+			return updated;
+		}
+
 		@Override
 		public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
 			super.appendHoverText(stack, level, tooltip, flag);
@@ -76,6 +99,51 @@ public class PlushieFriends implements ModInitializer {
 			}
 		}
 	};
+
+	private static void resolvePlushieOwner(CompoundTag tag) {
+		if (!tag.contains("BlockEntityTag", 10)) {
+			return;
+		}
+
+		CompoundTag blockEntityTag = tag.getCompound("BlockEntityTag");
+		if (!blockEntityTag.contains("PlushieOwner", 8)) {
+			return;
+		}
+
+		String ownerName = blockEntityTag.getString("PlushieOwner");
+		if (ownerName.isEmpty()) {
+			return;
+		}
+
+		SkullBlockEntity.updateGameprofile(new GameProfile(null, ownerName), (profile) -> {
+			CompoundTag profileTag = new CompoundTag();
+			NbtUtils.writeGameProfile(profileTag, profile);
+			blockEntityTag.put("PlushieOwner", profileTag);
+			if (profile.getProperties().containsKey("textures")) {
+				RESOLVED_PROFILE_CACHE.put(ownerName, profile);
+			}
+		});
+	}
+
+	private static void applyCachedOwner(Level level, BlockPos pos, BlockState state) {
+		BlockEntity blockEntity = level.getBlockEntity(pos);
+		if (!(blockEntity instanceof DynamicPlushieBlockEntity plushieBlockEntity)) {
+			return;
+		}
+
+		GameProfile owner = plushieBlockEntity.getOwner();
+		if (owner == null || owner.getProperties().containsKey("textures")) {
+			return;
+		}
+
+		GameProfile cachedProfile = RESOLVED_PROFILE_CACHE.get(owner.getName());
+		if (cachedProfile == null || !cachedProfile.getProperties().containsKey("textures")) {
+			return;
+		}
+
+		plushieBlockEntity.setOwner(cachedProfile);
+		level.sendBlockUpdated(pos, state, state, 3);
+	}
 
 	@Override
 	public void onInitialize() {
