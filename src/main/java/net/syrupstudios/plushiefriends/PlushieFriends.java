@@ -171,7 +171,6 @@ public class PlushieFriends implements ModInitializer {
 		}
 
 		plushieBlockEntity.setOwner(cachedProfile);
-		level.sendBlockUpdated(pos, state, state, 3);
 	}
 
 	private static void writeProfileToTag(CompoundTag blockEntityTag, GameProfile profile) {
