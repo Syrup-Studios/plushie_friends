@@ -14,27 +14,24 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class PlushieProfileCache {
-    private static final Map<String, ResourceLocation> SKIN_LOCATION_CACHE = new HashMap<>();
+    private static final Map<String, Skin> SKIN_CACHE = new HashMap<>();
 
     private PlushieProfileCache() {
     }
 
     public static Skin getSkin(GameProfile profile) {
         if (profile != null && profile.getProperties().containsKey("textures")) {
-            return new Skin(getSkinLocation(profile), isSlimSkin(profile));
+            String key = getTextureKey(profile);
+            Skin cached = SKIN_CACHE.get(key);
+            if (cached == null) {
+                ResourceLocation texture = Minecraft.getInstance().getSkinManager().getInsecureSkinLocation(profile);
+                boolean slim = isSlimSkin(profile);
+                cached = new Skin(texture, slim);
+                SKIN_CACHE.put(key, cached);
+            }
+            return cached;
         }
         return new Skin(DefaultPlayerSkin.getDefaultSkin(), false);
-    }
-
-    private static ResourceLocation getSkinLocation(GameProfile profile) {
-        String key = getTextureKey(profile);
-
-        ResourceLocation textureLocation = SKIN_LOCATION_CACHE.get(key);
-        if (textureLocation == null) {
-            textureLocation = Minecraft.getInstance().getSkinManager().getInsecureSkinLocation(profile);
-            SKIN_LOCATION_CACHE.put(key, textureLocation);
-        }
-        return textureLocation;
     }
 
     private static String getTextureKey(GameProfile profile) {

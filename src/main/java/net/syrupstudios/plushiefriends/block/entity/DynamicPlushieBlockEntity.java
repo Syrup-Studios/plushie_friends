@@ -19,6 +19,11 @@ public class DynamicPlushieBlockEntity extends BlockEntity {
     private GameProfile owner = null;
     private ListTag lore = new ListTag();
     private boolean isResolving = false;
+    private final long creationTime = System.currentTimeMillis();
+
+    public boolean isSafeToForceRender() {
+        return (System.currentTimeMillis() - this.creationTime) > 250;
+    }
 
     public DynamicPlushieBlockEntity(BlockPos pos, BlockState state) {
         super(TYPE, pos, state);

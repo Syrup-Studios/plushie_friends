@@ -1,5 +1,6 @@
 package net.syrupstudios.plushiefriends.client.renderer;
 
+import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -29,7 +30,8 @@ public class DynamicPlushieBlockEntityRenderer implements BlockEntityRenderer<Dy
 
     @Override
     public void render(DynamicPlushieBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay) {
-        if (blockEntity.getOwner() == null) return;
+        GameProfile owner = blockEntity.getOwner();
+        if ((owner == null || !owner.getProperties().containsKey("textures")) && !blockEntity.isSafeToForceRender()) return;
 
         BlockState state = blockEntity.getBlockState();
         Direction facing = state.hasProperty(DynamicPlushieBlock.FACING) ? state.getValue(DynamicPlushieBlock.FACING) : Direction.NORTH;

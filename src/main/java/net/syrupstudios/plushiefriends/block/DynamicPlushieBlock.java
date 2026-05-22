@@ -62,17 +62,19 @@ public class DynamicPlushieBlock extends BaseEntityBlock {
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        switch (state.getValue(FACING)) {
-            case SOUTH:
-                return SHAPE_SOUTH;
-            case EAST:
-                return SHAPE_EAST;
-            case WEST:
-                return SHAPE_WEST;
-            case NORTH:
-            default:
-                return SHAPE_NORTH;
+        if (level.getBlockEntity(pos) instanceof DynamicPlushieBlockEntity plushie) {
+            com.mojang.authlib.GameProfile owner = plushie.getOwner();
+            if ((owner == null || !owner.getProperties().containsKey("textures")) && !plushie.isSafeToForceRender()) {
+                return Shapes.empty();
+            }
         }
+
+        return switch (state.getValue(FACING)) {
+            case SOUTH -> SHAPE_SOUTH;
+            case EAST -> SHAPE_EAST;
+            case WEST -> SHAPE_WEST;
+            default -> SHAPE_NORTH;
+        };
     }
 
     @Override
