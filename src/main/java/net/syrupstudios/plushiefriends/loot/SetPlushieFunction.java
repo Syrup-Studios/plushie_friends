@@ -1,5 +1,6 @@
 package net.syrupstudios.plushiefriends.loot;
 
+import com.mojang.authlib.GameProfile;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -11,6 +12,7 @@ import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.StringTag;
 import net.syrupstudios.plushiefriends.PlushieFriends;
 import net.syrupstudios.plushiefriends.data.PlushieDataManager;
@@ -35,7 +37,14 @@ public class SetPlushieFunction extends LootItemConditionalFunction {
             CompoundTag blockEntityTag = stack.getOrCreateTagElement("BlockEntityTag");
 
             if (!def.ownerName().isEmpty()) {
-                blockEntityTag.putString("PlushieOwner", def.ownerName());
+                GameProfile profile = PlushieDataManager.getResolvedProfile(def.ownerName(), context.getLevel().getServer());
+                if (profile != null) {
+                    CompoundTag profileTag = new CompoundTag();
+                    NbtUtils.writeGameProfile(profileTag, profile);
+                    blockEntityTag.put("PlushieOwner", profileTag);
+                } else {
+                    blockEntityTag.putString("PlushieOwner", def.ownerName());
+                }
             }
 
             if (!def.lore().isEmpty()) {
