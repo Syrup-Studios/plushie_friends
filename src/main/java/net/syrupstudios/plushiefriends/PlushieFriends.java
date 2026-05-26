@@ -50,7 +50,7 @@ public class PlushieFriends implements ModInitializer {
 			FabricBlockSettings.copyOf(Blocks.WHITE_WOOL).noOcclusion()
 	);
 
-	public static final BlockItem PLUSHIE_ITEM = new BlockItem(PLUSHIE_BLOCK, new FabricItemSettings()) {
+	public static final BlockItem PLUSHIE_ITEM = new BlockItem(PLUSHIE_BLOCK, new FabricItemSettings().stacksTo(1)) {
 		@Override
 		public void verifyTagAfterLoad(CompoundTag tag) {
 			super.verifyTagAfterLoad(tag);
