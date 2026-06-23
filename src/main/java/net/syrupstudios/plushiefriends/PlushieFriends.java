@@ -40,7 +40,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PlushieFriends implements ModInitializer {
-	public static final String MOD_ID = "plushie-friends";
+	public static final String MOD_ID = "plushie_friends";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	private static final Map<String, GameProfile> RESOLVED_PROFILE_CACHE = new ConcurrentHashMap<>();
 
