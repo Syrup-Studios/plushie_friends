@@ -6,6 +6,6 @@ stonecutter active "1.20.1-fabric"
 
 stonecutter {
     parameters {
-        constants.match(node.metadata.project.substringAfterLast('-'), "fabric", "forge")
+        constants.match(node.metadata.project.substringAfterLast('-'), "fabric")
     }
 }
