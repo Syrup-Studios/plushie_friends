@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "plushie-friends:plushie",
+          "name": "plushie_friends:plushie",
           "functions": [
             {
               "function": "minecraft:copy_nbt",
