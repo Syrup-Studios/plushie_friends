@@ -1,25 +1,20 @@
-# Stonecutter Fabric template
-## Setup
-1. Review the supported Minecraft versions in `settings.gradle.kts`.
-   For new entries, add `versions/.../gradle.properties` with the same keys as other versions.
-2. Change `mod.group`, `mod.id` and `mod.name` properties in `gradle.properties`.
-3. Rename `com.example` package in `src/main/java`.
-4. Rename `src/main/resources/template.mixins.json` to use your mod's id.
-5. Review the `LICENSE` file. 
-   See the [license decision diagram](https://docs.codeberg.org/getting-started/licensing/#license-decision-diagram) for common options.
-6. Review `src/main/resources/fabric.mod.json` to have up-to-date properties.
+![Plushie Friends Title](https://cdn.modrinth.com/data/cached_images/f30e6befd7a6ccea12dc6fe4cb34b09f3545054c.png)
 
-## Usage
-- Use `"Set active project to ..."` Gradle tasks to update the Minecraft version
-  available in `src/` classes.
-- Use `buildAndCollect` Gradle task to store mod releases in `build/libs/`.
-- Enable `mod-publish-plugin` in `stonecutter.gradle.kts` and `build.gradle.kts`
-  and the corresponding code blocks to publish releases to Modrinth and Curseforge.
-- Enable `maven-publish` in `build.gradle.kts` and the corresponding code block
-  to publish releases to a personal maven repository.
+**Plushie Friends** is a simple Fabric mod that lets you turn players into cute, collectible 3D plushies to decorate your world!
 
-## Useful links
-- [Stonecutter beginner's guide](https://stonecutter.kikugie.dev/wiki/start/): *spoiler: you* ***need*** *to understand how it works!*
-- [Fabric Discord server](https://discord.gg/v6v4pMv): for mod development help.
-- [Stonecutter Discord server](https://discord.kikugie.dev/): for Stonecutter and Gradle help.
-- [How To Ask Questions - the guide](http://www.catb.org/esr/faqs/smart-questions.html): also in [video form](https://www.youtube.com/results?search_query=How+To+Ask+Questions+The+Smart+Way).
+*   **Skins Don't Change:** They work just like vanilla player heads. The plushie grabs a player's skin the moment it's made and locks it in. If that player updates their skin later, your plushie stays exactly the same as a neat little time capsule.
+*   **Cute 3D Models:** The plushies have detailed little heads, bodies, arms, and legs that automatically turn to face whichever way you place them down.
+*   **Name Tags:** Hovering over a plushie in your inventory shows the owner's name in a clean, colored text so you don't lose track of who is who.
+*   **Great for Modpacks:** Fully supports datapacks, making it easy for pack creators add player plushies into loot chests. You can find a guide [here](https://wiki.thesalad.bar/mods/plushie-friends/datapack/).
+
+***
+
+### How to Get Them
+
+Either by using a custom datapack, more info [here](https://wiki.thesalad.bar/mods/plushie-friends/datapack/)
+
+or by using commands, you can spawn them in using this command:
+
+```
+/give @p plushie_friends:plushie{BlockEntityTag:{PlushieOwner:"PLAYER NAME"}}
+```
