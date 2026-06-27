@@ -11,11 +11,9 @@ import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunct
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.nbt.StringTag;
 import net.syrupstudios.plushiefriends.PlushieFriends;
 import net.syrupstudios.plushiefriends.data.PlushieDataManager;
+import net.syrupstudios.plushiefriends.util.PlushieNbtHelper;
 
 public class SetPlushieFunction extends LootItemConditionalFunction {
     private final ResourceLocation plushieId;
@@ -34,25 +32,19 @@ public class SetPlushieFunction extends LootItemConditionalFunction {
     protected ItemStack run(ItemStack stack, LootContext context) {
         PlushieDataManager.PlushieDefinition def = PlushieDataManager.get(this.plushieId);
         if (def != null) {
-            CompoundTag blockEntityTag = stack.getOrCreateTagElement("BlockEntityTag");
+            CompoundTag blockEntityTag = stack.getOrCreateTagElement(PlushieNbtHelper.BLOCK_ENTITY_TAG);
 
             if (!def.ownerName().isEmpty()) {
                 GameProfile profile = PlushieDataManager.getResolvedProfile(def.ownerName(), context.getLevel().getServer());
                 if (profile != null) {
-                    CompoundTag profileTag = new CompoundTag();
-                    NbtUtils.writeGameProfile(profileTag, profile);
-                    blockEntityTag.put("PlushieOwner", profileTag);
+                    PlushieNbtHelper.writeOwnerToBlockEntityTag(blockEntityTag, profile);
                 } else {
-                    blockEntityTag.putString("PlushieOwner", def.ownerName());
+                    PlushieNbtHelper.writeOwnerStringToBlockEntityTag(blockEntityTag, def.ownerName());
                 }
             }
 
             if (!def.lore().isEmpty()) {
-                ListTag loreList = new ListTag();
-                for (String line : def.lore()) {
-                    loreList.add(StringTag.valueOf(line));
-                }
-                blockEntityTag.put("PlushieLore", loreList);
+                PlushieNbtHelper.writeLoreToBlockEntityTag(blockEntityTag, def.lore());
             }
         }
         return stack;

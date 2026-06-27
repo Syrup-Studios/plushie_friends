@@ -10,11 +10,11 @@ import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.syrupstudios.plushiefriends.PlushieFriends;
 import net.syrupstudios.plushiefriends.block.entity.DynamicPlushieBlockEntity;
 import net.syrupstudios.plushiefriends.client.renderer.DynamicPlushieBlockEntityRenderer;
 import net.syrupstudios.plushiefriends.client.renderer.PlushieModel;
+import net.syrupstudios.plushiefriends.util.PlushieNbtHelper;
 
 public class PlushieFriendsClient implements ClientModInitializer {
     private PlushieModel itemModel;
@@ -32,17 +32,7 @@ public class PlushieFriendsClient implements ClientModInitializer {
             GameProfile owner = null;
             if (stack.hasTag()) {
                 CompoundTag tag = stack.getTag();
-                if (tag != null && tag.contains("BlockEntityTag", 10)) {
-                    CompoundTag blockEntityTag = tag.getCompound("BlockEntityTag");
-                    if (blockEntityTag.contains("PlushieOwner", 10)) {
-                        owner = NbtUtils.readGameProfile(blockEntityTag.getCompound("PlushieOwner"));
-                    } else if (blockEntityTag.contains("PlushieOwner", 8)) {
-                        String name = blockEntityTag.getString("PlushieOwner");
-                        if (!name.isEmpty()) {
-                            owner = new GameProfile(null, name);
-                        }
-                    }
-                }
+                owner = PlushieNbtHelper.getOwnerFromRoot(tag);
             }
 
             PlushieProfileCache.Skin skin = PlushieProfileCache.getSkin(owner);

@@ -2,22 +2,17 @@ package net.syrupstudios.plushiefriends.client;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.resources.ResourceLocation;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
+import net.syrupstudios.plushiefriends.util.PlushieProfileManager;
 import java.util.HashMap;
 import java.util.Map;
 
 public final class PlushieProfileCache {
     private static final Map<String, Skin> SKIN_CACHE = new HashMap<>();
 
-    private PlushieProfileCache() {
-    }
+    private PlushieProfileCache() {}
 
     public static Skin getSkin(GameProfile profile) {
         if (profile != null && profile.getProperties().containsKey("textures")) {
@@ -42,27 +37,14 @@ public final class PlushieProfileCache {
     }
 
     private static boolean isSlimSkin(GameProfile profile) {
-        try {
-            for (Property property : profile.getProperties().get("textures")) {
-                String jsonStr = new String(Base64.getDecoder().decode(property.getValue()), StandardCharsets.UTF_8);
-                JsonObject json = JsonParser.parseString(jsonStr).getAsJsonObject();
-                if (json.has("textures")) {
-                    JsonObject textures = json.getAsJsonObject("textures");
-                    if (textures.has("SKIN")) {
-                        JsonObject skin = textures.getAsJsonObject("SKIN");
-                        if (skin.has("metadata")) {
-                            JsonObject metadata = skin.getAsJsonObject("metadata");
-                            if (metadata.has("model")) {
-                                return "slim".equals(metadata.get("model").getAsString());
-                            }
-                        }
-                    }
-                }
+        for (Property property : profile.getProperties().get("textures")) {
+            Boolean cachedSlim = PlushieProfileManager.getIsSlimCached(property.getValue());
+            if (cachedSlim != null) {
+                return cachedSlim;
             }
-        } catch (Exception ignored) {}
+        }
         return false;
     }
 
-    public record Skin(ResourceLocation textureLocation, boolean slim) {
-    }
+    public record Skin(ResourceLocation textureLocation, boolean slim) {}
 }
