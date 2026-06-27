@@ -114,11 +114,19 @@ public class PlushieFriends implements ModInitializer {
 		}
 
 		CompoundTag blockEntityTag = tag.getCompound(PlushieNbtHelper.BLOCK_ENTITY_TAG);
-		if (!blockEntityTag.contains(PlushieNbtHelper.PLUSHIE_OWNER, PlushieNbtHelper.TAG_STRING)) {
+		String ownerName = PlushieNbtHelper.getOwnerNameFromBlockEntityTag(blockEntityTag);
+		if (ownerName.isEmpty()) {
 			return;
 		}
 
-		GameProfile cachedProfile = PlushieProfileManager.getCachedProfile(blockEntityTag.getString(PlushieNbtHelper.PLUSHIE_OWNER));
+		if (blockEntityTag.contains(PlushieNbtHelper.PLUSHIE_OWNER, PlushieNbtHelper.TAG_COMPOUND)) {
+			CompoundTag ownerCompound = blockEntityTag.getCompound(PlushieNbtHelper.PLUSHIE_OWNER);
+			if (ownerCompound.contains("Properties", PlushieNbtHelper.TAG_COMPOUND)) {
+				return;
+			}
+		}
+
+		GameProfile cachedProfile = PlushieProfileManager.getCachedProfile(ownerName);
 		if (cachedProfile == null || !cachedProfile.getProperties().containsKey("textures")) {
 			return;
 		}

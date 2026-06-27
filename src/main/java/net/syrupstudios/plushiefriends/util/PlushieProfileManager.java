@@ -8,6 +8,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -24,7 +25,8 @@ public final class PlushieProfileManager {
             return;
         }
 
-        GameProfile cached = PROFILE_CACHE.get(ownerName);
+        String cacheKey = ownerName.toLowerCase(Locale.ROOT);
+        GameProfile cached = PROFILE_CACHE.get(cacheKey);
         if (cached != null) {
             callback.accept(cached);
             return;
@@ -32,7 +34,8 @@ public final class PlushieProfileManager {
 
         SkullBlockEntity.updateGameprofile(new GameProfile(null, ownerName), profile -> {
             if (profile != null && profile.getProperties().containsKey("textures")) {
-                PROFILE_CACHE.put(ownerName, profile);
+                PROFILE_CACHE.put(cacheKey, profile);
+                PROFILE_CACHE.put(profile.getName().toLowerCase(Locale.ROOT), profile);
                 cacheModelTypeAsync(profile);
             }
             callback.accept(profile);
@@ -40,13 +43,14 @@ public final class PlushieProfileManager {
     }
 
     public static GameProfile getCachedProfile(String ownerName) {
-        return ownerName != null ? PROFILE_CACHE.get(ownerName) : null;
+        return ownerName != null ? PROFILE_CACHE.get(ownerName.toLowerCase(Locale.ROOT)) : null;
     }
 
     public static GameProfile getOrResolveServerProfile(String ownerName, MinecraftServer server) {
         if (ownerName == null || ownerName.isEmpty()) return null;
 
-        GameProfile profile = PROFILE_CACHE.get(ownerName);
+        String cacheKey = ownerName.toLowerCase(Locale.ROOT);
+        GameProfile profile = PROFILE_CACHE.get(cacheKey);
         if (profile != null || server == null) {
             return profile;
         }
@@ -57,14 +61,15 @@ public final class PlushieProfileManager {
                 .orElse(null);
 
         if (profile != null) {
-            PROFILE_CACHE.put(ownerName, profile);
+            PROFILE_CACHE.put(cacheKey, profile);
+            PROFILE_CACHE.put(profile.getName().toLowerCase(Locale.ROOT), profile);
             cacheModelTypeAsync(profile);
         }
         return profile;
     }
 
     public static void preloadOwner(String ownerName) {
-        if (ownerName != null && !ownerName.isEmpty() && !PROFILE_CACHE.containsKey(ownerName)) {
+        if (ownerName != null && !ownerName.isEmpty()) {
             resolveProfileAsync(ownerName, profile -> {});
         }
     }

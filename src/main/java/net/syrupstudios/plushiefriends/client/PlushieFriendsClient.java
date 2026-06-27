@@ -15,6 +15,7 @@ import net.syrupstudios.plushiefriends.block.entity.DynamicPlushieBlockEntity;
 import net.syrupstudios.plushiefriends.client.renderer.DynamicPlushieBlockEntityRenderer;
 import net.syrupstudios.plushiefriends.client.renderer.PlushieModel;
 import net.syrupstudios.plushiefriends.util.PlushieNbtHelper;
+import net.syrupstudios.plushiefriends.util.PlushieProfileManager;
 
 public class PlushieFriendsClient implements ClientModInitializer {
     private PlushieModel itemModel;
@@ -33,6 +34,16 @@ public class PlushieFriendsClient implements ClientModInitializer {
             if (stack.hasTag()) {
                 CompoundTag tag = stack.getTag();
                 owner = PlushieNbtHelper.getOwnerFromRoot(tag);
+
+                if (owner != null && !owner.getProperties().containsKey("textures")) {
+                    String ownerName = owner.getName();
+                    GameProfile cached = PlushieProfileManager.getCachedProfile(ownerName);
+                    if (cached != null && cached.getProperties().containsKey("textures")) {
+                        owner = cached;
+                    } else {
+                        PlushieProfileManager.resolveProfileAsync(ownerName, p -> {});
+                    }
+                }
             }
 
             PlushieProfileCache.Skin skin = PlushieProfileCache.getSkin(owner);
