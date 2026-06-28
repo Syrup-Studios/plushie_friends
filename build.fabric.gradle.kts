@@ -62,7 +62,6 @@ tasks {
             "modId" to project.property("mod.id"),
             "modDescription" to project.property("mod.description"),
             "authors" to project.property("mod.authors"),
-            "contributors" to project.property("mod.contributors"),
             "license" to project.property("mod.license"),
             "homepage" to project.property("mod.homepage"),
             "issues" to project.property("mod.issues"),
