@@ -1,5 +1,5 @@
 plugins {
-    id("fabric-loom") version "1.13.6"
+    id("fabric-loom") version "1.17.21"
     id("maven-publish")
 }
 
@@ -8,7 +8,11 @@ val minecraftVersion = property("deps.minecraft") as String
 version = "${property("mod.version")}+$minecraftVersion-fabric"
 base.archivesName = property("mod.id") as String
 
-val targetJavaVersion = if (stonecutter.eval(stonecutter.current.version, ">=1.20.5")) 21 else 17
+val targetJavaVersion = when {
+    stonecutter.eval(stonecutter.current.version, ">=26.2") -> 25
+    stonecutter.eval(stonecutter.current.version, ">=1.20.5") -> 21
+    else -> 17
+}
 val requiredJava = JavaVersion.toVersion(targetJavaVersion)
 
 repositories {
@@ -69,6 +73,7 @@ tasks {
 
             "fl" to project.property("deps.fabric_loader"),
             "fapi" to project.property("deps.fabric_api"),
+            "java" to targetJavaVersion,
         )
 
         inputs.properties(props)
@@ -82,6 +87,9 @@ tasks {
             exclude("data/*/loot_tables/**")
         } else {
             exclude("data/*/loot_table/**")
+        }
+        if (stonecutter.eval(stonecutter.current.version, "<26.2")) {
+            exclude("assets/*/items/**")
         }
     }
 

@@ -1,6 +1,6 @@
 package net.syrupstudios.plushiefriends.block;
 
-//? if >=1.21
+//? if >=1.21 && <26.3
 /*import com.mojang.serialization.MapCodec;*/
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -18,18 +18,23 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+//? if >=26.2 {
+/*import net.minecraft.world.level.block.state.properties.EnumProperty;
+*///?} else {
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+//?}
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.RotationSegment;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.syrupstudios.plushiefriends.block.entity.DynamicPlushieBlockEntity;
+import net.syrupstudios.plushiefriends.item.PlushieBlockItem;
 import net.syrupstudios.plushiefriends.PlushieFriends;
 import org.jetbrains.annotations.Nullable;
 
 public class DynamicPlushieBlock extends BaseEntityBlock {
-    //? if >=1.21 {
+    //? if >=1.21 && <26.3 {
     /*public static final MapCodec<DynamicPlushieBlock> CODEC = simpleCodec(DynamicPlushieBlock::new);
 
     @Override
@@ -40,7 +45,11 @@ public class DynamicPlushieBlock extends BaseEntityBlock {
     *///?}
     private static final int ROTATION_COUNT = RotationSegment.getMaxSegmentIndex() + 1;
     public static final IntegerProperty ROTATION = BlockStateProperties.ROTATION_16;
+    //? if >=26.2 {
+    /*public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
+    *///?} else {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    //?}
 
     private static final VoxelShape HEAD = Block.box(6.0, 6.0, 6.0, 10.0, 10.0, 10.0);
     private static final VoxelShape TORSO = Block.box(6.0, 0.0, 7.0, 10.0, 6.0, 9.0);
@@ -126,6 +135,9 @@ public class DynamicPlushieBlock extends BaseEntityBlock {
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
+        //? if >=26.2 {
+        /*return RenderShape.INVISIBLE;
+        *///?} else
         return RenderShape.ENTITYBLOCK_ANIMATED;
     }
 
@@ -135,9 +147,21 @@ public class DynamicPlushieBlock extends BaseEntityBlock {
         return new DynamicPlushieBlockEntity(pos, state);
     }
 
+    //? if >=26.2 {
+    /*@Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state,
+                            net.minecraft.world.entity.LivingEntity placer, net.minecraft.world.item.ItemStack stack) {
+        super.setPlacedBy(level, pos, state, placer, stack);
+        PlushieBlockItem.applyPlacedData(level, pos, stack);
+    }
+    *///?}
+
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        //? if >=26.2 {
+        /*if (!level.isClientSide()) {
+        *///?} else
         if (!level.isClientSide) {
             return createTickerHelper(type, PlushieFriends.PLUSHIE_BLOCK_ENTITY, DynamicPlushieBlockEntity::serverTick);
         }

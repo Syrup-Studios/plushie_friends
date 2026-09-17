@@ -5,8 +5,21 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+//? if >=26.2 {
+/*import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.resources.FileToIdConverter;
+import net.minecraft.resources.Identifier;
+*///?} else
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 //? if fabric
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
+//? if >=26.2 {
+/*import net.minecraft.resources.Identifier;
+*///?} else
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -19,18 +32,34 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 
+//? if >=26.2 {
+/*public class PlushieDataManager extends SimpleJsonResourceReloadListener<PlushieDataManager.PlushieDefinition>
+*///?} else
 public class PlushieDataManager extends SimpleJsonResourceReloadListener
         //? if fabric
         implements IdentifiableResourceReloadListener
 {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+    //? if >=26.2 {
+    /*private static final Map<Identifier, PlushieDefinition> PLUSHIES = new HashMap<>();
+    *///?} else
     private static final Map<ResourceLocation, PlushieDefinition> PLUSHIES = new HashMap<>();
 
     public PlushieDataManager() {
+        //? if >=26.2 {
+        /*super(PlushieDefinition.CODEC, FileToIdConverter.json("plushies"));
+        *///?} else
         super(GSON, "plushies");
     }
 
     @Override
+    //? if >=26.2 {
+    /*protected void apply(Map<Identifier, PlushieDefinition> prepared, ResourceManager resourceManager, ProfilerFiller profiler) {
+        PLUSHIES.clear();
+        PlushieProfileManager.clearCache();
+        PLUSHIES.putAll(prepared);
+        PlushieFriends.LOGGER.info("Loaded {} plushie data pack definitions.", PLUSHIES.size());
+    }*///?} else {
     protected void apply(Map<ResourceLocation, JsonElement> prepared, ResourceManager resourceManager, ProfilerFiller profiler) {
         PLUSHIES.clear();
         PlushieProfileManager.clearCache();
@@ -53,14 +82,19 @@ public class PlushieDataManager extends SimpleJsonResourceReloadListener
 
         PlushieFriends.LOGGER.info("Loaded {} plushie data pack definitions.", PLUSHIES.size());
     }
+    //?}
 
     //? if fabric {
     @Override
+    //? if >=26.2 {
+    /*public Identifier getFabricId() { *///?} else
     public ResourceLocation getFabricId() {
         return PlushieFriends.id("plushies");
     }
     //?}
 
+    //? if >=26.2 {
+    /*public static PlushieDefinition get(Identifier id) { *///?} else
     public static PlushieDefinition get(ResourceLocation id) {
         return PLUSHIES.get(id);
     }
@@ -76,5 +110,11 @@ public class PlushieDataManager extends SimpleJsonResourceReloadListener
         return PlushieProfileManager.getOrResolveServerProfile(ownerName, server);
     }
 
-    public record PlushieDefinition(String ownerName, List<String> lore) {}
+    public record PlushieDefinition(String ownerName, List<String> lore) {
+        //? if >=26.2 {
+        /*public static final Codec<PlushieDefinition> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.STRING.optionalFieldOf("owner_name", "").forGetter(PlushieDefinition::ownerName),
+                Codec.STRING.listOf().optionalFieldOf("lore", List.of()).forGetter(PlushieDefinition::lore)
+        ).apply(instance, PlushieDefinition::new));*///?}
+    }
 }

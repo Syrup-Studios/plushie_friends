@@ -20,7 +20,18 @@ public final class PlushieItemData {
     }
 
     public static CompoundTag read(ItemStack stack) {
-        //? if >=1.21 {
+        //? if >=26.2 {
+        /*CompoundTag result = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        var blockData = stack.get(DataComponents.BLOCK_ENTITY_DATA);
+        CompoundTag legacy = blockData == null ? new CompoundTag() : blockData.copyTagWithoutId();
+        copyMissingField(result, legacy, PlushieNbtHelper.PLUSHIE_OWNER);
+        copyMissingField(result, legacy, PlushieNbtHelper.PLUSHIE_LORE);
+        ResolvableProfile profile = stack.get(DataComponents.PROFILE);
+        if (!result.contains(PlushieNbtHelper.PLUSHIE_OWNER) && profile != null) {
+            PlushieNbtHelper.writeOwnerToBlockEntityTag(result, profile.partialProfile());
+        }
+        return result;
+        *///?} else if >=1.21 {
         /*CompoundTag result = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         CompoundTag legacy = stack.getOrDefault(DataComponents.BLOCK_ENTITY_DATA, CustomData.EMPTY).copyTag();
         copyMissingField(result, legacy, PlushieNbtHelper.PLUSHIE_OWNER);

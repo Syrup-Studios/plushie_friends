@@ -63,7 +63,19 @@ public class DynamicPlushieBlockEntity extends BlockEntity {
         return updated;
     }
 
-    //? if >=1.21 {
+    //? if >=26.2 {
+    /*@Override
+    protected void loadAdditional(net.minecraft.world.level.storage.ValueInput input) {
+        super.loadAdditional(input);
+        CompoundTag tag = new CompoundTag();
+        input.read(PlushieNbtHelper.PLUSHIE_OWNER, com.mojang.serialization.Codec.PASSTHROUGH)
+                .ifPresent(value -> tag.put(PlushieNbtHelper.PLUSHIE_OWNER, value.convert(net.minecraft.nbt.NbtOps.INSTANCE).getValue()));
+        this.owner = PlushieNbtHelper.getOwnerFromBlockEntityTag(tag);
+        this.lore = new ListTag();
+        input.read(PlushieNbtHelper.PLUSHIE_LORE, com.mojang.serialization.Codec.STRING.listOf())
+                .ifPresent(lines -> lines.forEach(line -> this.lore.add(StringTag.valueOf(line))));
+    }
+    *///?} else if >=1.21 {
     /*@Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
@@ -77,6 +89,7 @@ public class DynamicPlushieBlockEntity extends BlockEntity {
     }
     //?}
 
+    //? if <26.2 {
     private void loadPlushieData(CompoundTag tag) {
         this.owner = PlushieNbtHelper.getOwnerFromBlockEntityTag(tag);
 
@@ -87,7 +100,21 @@ public class DynamicPlushieBlockEntity extends BlockEntity {
         }
     }
 
-    //? if >=1.21 {
+    //?}
+    //? if >=26.2 {
+    /*@Override
+    protected void saveAdditional(net.minecraft.world.level.storage.ValueOutput output) {
+        super.saveAdditional(output);
+        CompoundTag tag = new CompoundTag();
+        savePlushieData(tag);
+        if (tag.get(PlushieNbtHelper.PLUSHIE_OWNER) != null) {
+            output.store(PlushieNbtHelper.PLUSHIE_OWNER, com.mojang.serialization.Codec.PASSTHROUGH,
+                    new com.mojang.serialization.Dynamic<>(net.minecraft.nbt.NbtOps.INSTANCE, tag.get(PlushieNbtHelper.PLUSHIE_OWNER)));
+        }
+        output.store(PlushieNbtHelper.PLUSHIE_LORE, com.mojang.serialization.Codec.STRING.listOf(),
+                PlushieNbtHelper.getLoreFromBlockEntityTag(tag));
+    }
+    *///?} else if >=1.21 {
     /*@Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
@@ -127,6 +154,41 @@ public class DynamicPlushieBlockEntity extends BlockEntity {
     }
     //?}
 
+    //? if >=26.2 {
+    /*public static void serverTick(Level level, BlockPos pos, BlockState state, DynamicPlushieBlockEntity blockEntity) {
+        if (blockEntity.owner == null || blockEntity.owner.properties().containsKey("textures")) {
+            return;
+        }
+
+        GameProfile cachedProfile = PlushieProfileManager.getCachedProfile(blockEntity.owner.name());
+        if (cachedProfile != null && cachedProfile.properties().containsKey("textures")) {
+            blockEntity.owner = cachedProfile;
+            blockEntity.setChanged();
+            level.sendBlockUpdated(pos, state, state, 3);
+            return;
+        }
+
+        if (!blockEntity.isResolving && PlushieProfileManager.shouldAttemptResolution(blockEntity.owner.name())) {
+            blockEntity.isResolving = true;
+
+            PlushieProfileManager.resolveProfileAsync(blockEntity.owner.name(), profile -> {
+                Runnable applyResult = () -> {
+                    if (profile != null) {
+                        blockEntity.owner = profile;
+                        blockEntity.setChanged();
+                        level.sendBlockUpdated(pos, state, state, 3);
+                    }
+                    blockEntity.isResolving = false;
+                };
+                if (level.getServer() != null) {
+                    level.getServer().execute(applyResult);
+                } else {
+                    applyResult.run();
+                }
+            });
+        }
+    }
+    *///?} else {
     public static void serverTick(Level level, BlockPos pos, BlockState state, DynamicPlushieBlockEntity blockEntity) {
         if (blockEntity.owner == null || blockEntity.owner.getProperties().containsKey("textures")) {
             return;
@@ -160,4 +222,5 @@ public class DynamicPlushieBlockEntity extends BlockEntity {
             });
         }
     }
+    //?}
 }

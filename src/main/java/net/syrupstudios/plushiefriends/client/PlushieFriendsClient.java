@@ -7,16 +7,25 @@ import com.mojang.math.Axis;
 //? if fabric {
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
+//? if <26.2
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
+//? if <26.2
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
+//? if >=26.2
+/*import net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry;
+import net.minecraft.client.renderer.special.SpecialModelRenderers;*/
 //?} else if neoforge {
 /*import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 *///?}
+//? if neoforge && >=26.2
+/*import net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent;*/
 import net.minecraft.client.Minecraft;
+//? if <26.2
 import net.minecraft.client.renderer.MultiBufferSource;
+//? if <26.2
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -28,8 +37,10 @@ import net.syrupstudios.plushiefriends.item.PlushieItemData;
 import net.syrupstudios.plushiefriends.util.PlushieNbtHelper;
 import net.syrupstudios.plushiefriends.util.PlushieProfileManager;
 
-//? if neoforge
+//? if neoforge && <26.2
 /*@EventBusSubscriber(modid = PlushieFriends.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)*/
+//? if neoforge && >=26.2
+/*@EventBusSubscriber(modid = PlushieFriends.MOD_ID, value = Dist.CLIENT)*/
 public final class PlushieFriendsClient
         //? if fabric
         implements ClientModInitializer
@@ -39,19 +50,22 @@ public final class PlushieFriendsClient
     //? if fabric {
     @Override
     public void onInitializeClient() {
-        EntityModelLayerRegistry.registerModelLayer(
+        //? if >=26.2
+        /*ModelLayerRegistry.registerModelLayer(
                 DynamicPlushieBlockEntityRenderer.LAYER_LOCATION,
                 PlushieModel::createLayer
         );
+        SpecialModelRenderers.ID_MAPPER.put(
+                PlushieFriends.id("plushie"), PlushieSpecialRenderer.Unbaked.MAP_CODEC
+        );*/
+        //? if <26.2
+        EntityModelLayerRegistry.registerModelLayer(DynamicPlushieBlockEntityRenderer.LAYER_LOCATION, PlushieModel::createLayer);
         BlockEntityRendererRegistry.register(
                 PlushieFriends.PLUSHIE_BLOCK_ENTITY,
                 DynamicPlushieBlockEntityRenderer::new
         );
-        BuiltinItemRendererRegistry.INSTANCE.register(
-                PlushieFriends.PLUSHIE_ITEM,
-                (stack, displayContext, poseStack, buffers, light, overlay) ->
-                        renderItem(stack, displayContext, poseStack, buffers, light, overlay)
-        );
+        //? if <26.2
+        BuiltinItemRendererRegistry.INSTANCE.register(PlushieFriends.PLUSHIE_ITEM, PlushieFriendsClient::renderItem);
     }
     //?} else if neoforge {
     /*@SubscribeEvent
@@ -68,6 +82,13 @@ public final class PlushieFriendsClient
     }
     *///?}
 
+    //? if neoforge && >=26.2
+    /*@SubscribeEvent
+    public static void registerSpecialModelRenderer(RegisterSpecialModelRendererEvent event) {
+        event.register(PlushieFriends.id("plushie"), PlushieSpecialRenderer.Unbaked.MAP_CODEC);
+    }*/
+
+    //? if <26.2 {
     public static void renderItem(
             ItemStack stack,
             ItemDisplayContext displayContext,
@@ -106,4 +127,5 @@ public final class PlushieFriendsClient
         itemModel.render(poseStack, vertices, light, overlay, skin.slim());
         poseStack.popPose();
     }
+    //?}
 }

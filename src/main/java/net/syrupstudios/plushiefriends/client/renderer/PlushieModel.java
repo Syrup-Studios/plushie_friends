@@ -9,8 +9,16 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
+//? if >=26.2 {
+/*import net.minecraft.client.model.Model;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+*///?}
 
-public class PlushieModel {
+public class PlushieModel
+//? if >=26.2 {
+/* extends Model<PlushieModel.State> */
+//?}
+{
     private final ModelPart head;
     private final ModelPart body;
     private final ModelPart classicRightArm;
@@ -21,6 +29,8 @@ public class PlushieModel {
     private final ModelPart leftLeg;
 
     public PlushieModel(ModelPart root) {
+        //? if >=26.2
+        /*super(root, RenderTypes::entityCutout);*/
         this.head = root.getChild("head");
         this.body = root.getChild("body");
         this.classicRightArm = root.getChild("classic_right_arm");
@@ -30,6 +40,18 @@ public class PlushieModel {
         this.rightLeg = root.getChild("right_leg");
         this.leftLeg = root.getChild("left_leg");
     }
+
+    //? if >=26.2 {
+    /*public record State(boolean slim) {}
+
+    @Override
+    public void setupAnim(State state) {
+        this.classicRightArm.visible = !state.slim();
+        this.classicLeftArm.visible = !state.slim();
+        this.slimRightArm.visible = state.slim();
+        this.slimLeftArm.visible = state.slim();
+    }
+    *///?}
 
     public static LayerDefinition createLayer() {
         MeshDefinition meshDefinition = new MeshDefinition();

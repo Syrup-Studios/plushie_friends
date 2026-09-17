@@ -34,13 +34,21 @@ public final class FabricEntrypoint implements ModInitializer, ClientModInitiali
         );
 
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new PlushieDataManager());
-        ServerLifecycleEvents.SERVER_STARTED.register(server -> PlushieDataManager.preloadProfiles());
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+            //? if >=26.2 {
+            /*PlushieProfileManager.setProfileResolver(server);*///?}
+            PlushieDataManager.preloadProfiles();
+        });
         ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, manager, success) -> {
             if (success) {
                 PlushieDataManager.preloadProfiles();
             }
         });
-        ServerLifecycleEvents.SERVER_STOPPED.register(server -> PlushieProfileManager.clearCache());
+        ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
+            //? if >=26.2 {
+            /*PlushieProfileManager.setProfileResolver(null);*///?}
+            PlushieProfileManager.clearCache();
+        });
         PlushieFriends.initialized("Fabric");
     }
 

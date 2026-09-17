@@ -29,7 +29,7 @@ import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 *///?}
 
-//? if neoforge {
+//? if neoforge && <26.2 {
 /*import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.syrupstudios.plushiefriends.client.NeoForgePlushieItemRenderer;
 *///?}
@@ -48,7 +48,7 @@ public final class PlushieBlockItem extends BlockItem {
         return super.getName(stack);
     }
 
-    //? if >=1.21 {
+    //? if >=1.21 && <26.2 {
     /*@Override
     public void verifyComponentsAfterLoad(ItemStack stack) {
         super.verifyComponentsAfterLoad(stack);
@@ -63,7 +63,7 @@ public final class PlushieBlockItem extends BlockItem {
 
     *///?}
 
-    //? if neoforge {
+    //? if neoforge && <26.2 {
     /*@Override
     public void initializeClient(Consumer<IClientItemExtensions> consumer) {
         consumer.accept(new IClientItemExtensions() {
@@ -78,6 +78,7 @@ public final class PlushieBlockItem extends BlockItem {
 
     *///?}
 
+    //? if <26.2 {
     @Override
     protected boolean updateCustomBlockEntityTag(
             BlockPos pos, Level level, @Nullable Player player, ItemStack stack, BlockState state
@@ -91,7 +92,29 @@ public final class PlushieBlockItem extends BlockItem {
         }
         return updated;
     }
+    //?}
 
+    //? if >=26.2 {
+    /*@Override
+    public void inventoryTick(ItemStack stack, net.minecraft.server.level.ServerLevel level, Entity entity, net.minecraft.world.entity.EquipmentSlot slot) {
+        super.inventoryTick(stack, level, entity, slot);
+
+        CompoundTag tag = PlushieItemData.read(stack);
+        GameProfile owner = PlushieNbtHelper.getOwnerFromRoot(tag);
+        if (owner == null || owner.name() == null || owner.name().isEmpty()
+                || owner.properties().containsKey("textures")) {
+            return;
+        }
+
+        GameProfile cached = PlushieProfileManager.getCachedProfile(owner.name());
+        if (cached != null && cached.properties().containsKey("textures")) {
+            PlushieItemData.update(stack, data -> PlushieNbtHelper.writeOwnerToBlockEntityTag(data, cached));
+        } else if (PlushieProfileManager.shouldAttemptResolution(owner.name())) {
+            PlushieProfileManager.resolveProfileAsync(owner.name(), profile -> {});
+        }
+    }
+
+    *///?} else {
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
         super.inventoryTick(stack, level, entity, slotId, isSelected);
@@ -114,7 +137,19 @@ public final class PlushieBlockItem extends BlockItem {
         }
     }
 
-    //? if >=1.21 {
+    //?}
+
+    //? if >=26.2 {
+    /*@Override
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context,
+                                net.minecraft.world.item.component.TooltipDisplay display,
+                                Consumer<Component> tooltip, TooltipFlag flag) {
+        super.appendHoverText(stack, context, display, tooltip, flag);
+        for (String line : PlushieNbtHelper.getLoreFromRoot(PlushieItemData.read(stack))) {
+            tooltip.accept(Component.literal(line).withStyle(ChatFormatting.GRAY));
+        }
+    }
+    *///?} else if >=1.21 {
     /*@Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         super.appendHoverText(stack, context, tooltip, flag);
@@ -135,6 +170,26 @@ public final class PlushieBlockItem extends BlockItem {
         }
     }
 
+    //? if >=26.2 {
+    /*public static void applyPlacedData(Level level, BlockPos pos, ItemStack stack) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity instanceof DynamicPlushieBlockEntity plushie) {
+            plushie.applyItemData(PlushieItemData.read(stack));
+            applyCachedOwner(plushie);
+        }
+    }
+
+    private static void applyCachedOwner(DynamicPlushieBlockEntity plushie) {
+        GameProfile owner = plushie.getOwner();
+        if (owner == null || owner.name() == null || owner.properties().containsKey("textures")) {
+            return;
+        }
+        GameProfile cached = PlushieProfileManager.getCachedProfile(owner.name());
+        if (cached != null && cached.properties().containsKey("textures")) {
+            plushie.setOwner(cached);
+        }
+    }
+    *///?} else {
     private static void applyCachedOwner(DynamicPlushieBlockEntity plushie) {
         GameProfile owner = plushie.getOwner();
         if (owner == null || owner.getName() == null || owner.getProperties().containsKey("textures")) {
@@ -145,4 +200,5 @@ public final class PlushieBlockItem extends BlockItem {
             plushie.setOwner(cached);
         }
     }
+    //?}
 }

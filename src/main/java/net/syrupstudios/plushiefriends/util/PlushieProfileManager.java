@@ -5,6 +5,8 @@ import com.mojang.authlib.properties.Property;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.minecraft.server.MinecraftServer;
+//? if >=26.2
+/*import net.minecraft.server.players.ProfileResolver;*/
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -23,10 +25,18 @@ public final class PlushieProfileManager {
     private static final Map<String, CompletableFuture<GameProfile>> IN_FLIGHT = new ConcurrentHashMap<>();
     private static final Map<String, Long> FAILED_UNTIL = new ConcurrentHashMap<>();
     private static final AtomicLong CACHE_GENERATION = new AtomicLong();
+    //? if >=26.2
+    /*private static volatile ProfileResolver PROFILE_RESOLVER;*/
     private static final Pattern VALID_PLAYER_NAME = Pattern.compile("^[A-Za-z0-9_]{1,16}$");
     private static final long FAILURE_COOLDOWN_NANOS = TimeUnit.MINUTES.toNanos(10);
 
     private PlushieProfileManager() {}
+
+    //? if >=26.2 {
+    /*public static void setProfileResolver(MinecraftServer server) {
+        PROFILE_RESOLVER = server == null ? null : server.services().profileResolver();
+    }*/
+    //?}
 
     public static void resolveProfileAsync(String ownerName, Consumer<GameProfile> callback) {
         String normalizedName = normalizePlayerName(ownerName);
@@ -34,6 +44,12 @@ public final class PlushieProfileManager {
             callback.accept(null);
             return;
         }
+        //? if >=26.2 {
+        /*if (PROFILE_RESOLVER == null) {
+            callback.accept(null);
+            return;
+        }*/
+        //?}
 
         String cacheKey = normalizedName.toLowerCase(Locale.ROOT);
         GameProfile cached = PROFILE_CACHE.get(cacheKey);
@@ -56,7 +72,13 @@ public final class PlushieProfileManager {
 
         long generation = CACHE_GENERATION.get();
         try {
-            //? if >=1.21 {
+            //? if >=26.2 {
+            /*ProfileResolver resolver = PROFILE_RESOLVER;
+            CompletableFuture<GameProfile> lookup = resolver == null
+                    ? CompletableFuture.completedFuture(null)
+                    : CompletableFuture.supplyAsync(() -> resolver.fetchByName(normalizedName).orElse(null));
+            lookup.whenComplete((profile, error) -> {
+            *///?} else if >=1.21 {
             /*SkullBlockEntity.fetchGameProfile(normalizedName).whenComplete((optionalProfile, error) -> {
                 GameProfile profile = error == null ? optionalProfile.orElse(null) : null;
             *///?} else {
@@ -96,7 +118,11 @@ public final class PlushieProfileManager {
             return profile;
         }
 
-        //? if >=1.21 {
+        //? if >=26.2 {
+        /*PROFILE_RESOLVER = server.services().profileResolver();
+        resolveProfileAsync(normalizedName, ignored -> {});
+        return null;
+        *///?} else if >=1.21 {
         /*resolveProfileAsync(normalizedName, ignored -> {});
         return null;
         *///?} else {
@@ -138,7 +164,10 @@ public final class PlushieProfileManager {
     }
 
     private static void cacheModelType(GameProfile profile) {
+        //? if >=26.2 {
+        /*for (Property property : profile.properties().get("textures")) {*///?} else {
         for (Property property : profile.getProperties().get("textures")) {
+        //?}
             getOrCacheIsSlim(propertyValue(property));
         }
     }
@@ -183,14 +212,23 @@ public final class PlushieProfileManager {
     }
 
     private static boolean hasTextures(GameProfile profile) {
+        //? if >=26.2 {
+        /*return profile != null && profile.properties().containsKey("textures")
+                && !profile.properties().get("textures").isEmpty();
+        *///?} else {
         return profile != null && profile.getProperties().containsKey("textures")
                 && !profile.getProperties().get("textures").isEmpty();
+        //?}
     }
 
     private static void cacheProfile(String requestedKey, GameProfile profile) {
         PROFILE_CACHE.put(requestedKey, profile);
+        //? if >=26.2 {
+        /*if (profile.name() != null) {
+            PROFILE_CACHE.put(profile.name().toLowerCase(Locale.ROOT), profile);*///?} else {
         if (profile.getName() != null) {
             PROFILE_CACHE.put(profile.getName().toLowerCase(Locale.ROOT), profile);
+        //?}
         }
         FAILED_UNTIL.remove(requestedKey);
         cacheModelType(profile);

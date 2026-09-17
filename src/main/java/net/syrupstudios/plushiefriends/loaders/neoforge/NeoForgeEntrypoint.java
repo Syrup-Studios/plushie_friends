@@ -5,7 +5,6 @@ package net.syrupstudios.plushiefriends.loaders.neoforge;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
@@ -13,9 +12,7 @@ import net.syrupstudios.plushiefriends.PlushieFriends;
 import net.syrupstudios.plushiefriends.data.PlushieDataManager;
 import net.syrupstudios.plushiefriends.util.PlushieProfileManager;
 
-/**
- * NeoForge's entry point.
- ^/
+// NeoForge's entry point.
 @Mod(PlushieFriends.MOD_ID)
 public final class NeoForgeEntrypoint {
     public NeoForgeEntrypoint(IEventBus modBus) {
@@ -43,15 +40,27 @@ public final class NeoForgeEntrypoint {
                 ));
     }
 
-    private void addReloadListener(AddReloadListenerEvent event) {
+    //? if >=26.2 {
+    /^private void addReloadListener(net.neoforged.neoforge.event.AddServerReloadListenersEvent event) {
+        event.addListener(PlushieFriends.id("plushies"), new PlushieDataManager());
+    }
+    ^///?} else {
+    private void addReloadListener(net.neoforged.neoforge.event.AddReloadListenerEvent event) {
         event.addListener(new PlushieDataManager());
     }
+    //?}
 
     private void serverStarted(ServerStartedEvent event) {
+        //? if >=26.2 {
+        /^PlushieProfileManager.setProfileResolver(event.getServer());
+        ^///?}
         PlushieDataManager.preloadProfiles();
     }
 
     private void serverStopped(ServerStoppedEvent event) {
+        //? if >=26.2 {
+        /^PlushieProfileManager.setProfileResolver(null);
+        ^///?}
         PlushieProfileManager.clearCache();
     }
 }

@@ -29,11 +29,16 @@ For Minecraft 1.20.1:
 
 ### Build
 
-The 1.21.1 Fabric and NeoForge targets share the same source tree through Stonecutter:
+All supported targets share the same source tree through Stonecutter:
 
 ```bash
+./gradlew :1.20.1-fabric:build
 ./gradlew :1.21.1-fabric:build
 ./gradlew :1.21.1-neoforge:build
+./gradlew :26.2-fabric:build
+./gradlew :26.2-neoforge:build
+./gradlew :26.3-fabric:build
+./gradlew :26.3-neoforge:build
 ```
 
 The built JAR files are in each target's `build/libs` directory.

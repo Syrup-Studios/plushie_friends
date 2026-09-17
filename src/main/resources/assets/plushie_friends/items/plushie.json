@@ -1,0 +1,37 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "property": "minecraft:display_context",
+    "cases": [
+      {
+        "when": "firstperson_lefthand",
+        "model": {
+          "type": "minecraft:special",
+          "base": "plushie_friends:item/plushie",
+          "model": {
+            "type": "plushie_friends:plushie",
+            "left_hand": true
+          }
+        }
+      },
+      {
+        "when": "thirdperson_lefthand",
+        "model": {
+          "type": "minecraft:special",
+          "base": "plushie_friends:item/plushie",
+          "model": {
+            "type": "plushie_friends:plushie",
+            "left_hand": true
+          }
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:special",
+      "base": "plushie_friends:item/plushie",
+      "model": {
+        "type": "plushie_friends:plushie"
+      }
+    }
+  }
+}
