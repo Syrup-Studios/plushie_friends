@@ -4,14 +4,12 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.DefaultPlayerSkin;
+import net.minecraft.resources.ResourceLocation;
 //? if >=26.2 {
 /*import net.minecraft.client.renderer.PlayerSkinRenderCache;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.PlayerModelType;
 import net.minecraft.world.item.component.ResolvableProfile;
-*///?} else {
-import net.minecraft.resources.ResourceLocation;
-//?}
+*///?}
 import net.syrupstudios.plushiefriends.util.PlushieProfileManager;
 
 import java.util.HashMap;
@@ -92,9 +90,6 @@ public final class PlushieProfileCache {
     }
 
     public record Skin(
-            //? if >=26.2 {
-            /*Identifier*/
-            //?} else
             ResourceLocation
             textureLocation,
             boolean slim

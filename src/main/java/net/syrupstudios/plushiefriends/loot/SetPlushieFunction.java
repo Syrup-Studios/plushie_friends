@@ -8,9 +8,6 @@ import com.google.gson.JsonSerializationContext;
 /*import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 *///?}
-//? if >=26.2 {
-/*import net.minecraft.resources.Identifier;
-*///?} else
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -31,21 +28,7 @@ import net.syrupstudios.plushiefriends.item.PlushieItemData;
 import java.util.List;
 
 public class SetPlushieFunction extends LootItemConditionalFunction {
-    //? if >=26.3 {
-    /*public static final MapCodec<SetPlushieFunction> CODEC = RecordCodecBuilder.mapCodec(instance ->
-            commonFields(instance)
-                    .and(Identifier.CODEC.fieldOf("id").forGetter(function -> function.plushieId))
-                    .apply(instance, SetPlushieFunction::new)
-    );
-
-    *///?} else if >=26.2 {
-    /*public static final MapCodec<SetPlushieFunction> CODEC = RecordCodecBuilder.mapCodec(instance ->
-            commonFields(instance)
-                    .and(Identifier.CODEC.fieldOf("id").forGetter(function -> function.plushieId))
-                    .apply(instance, SetPlushieFunction::new)
-    );
-
-    *///?} else if >=1.21 {
+    //? if >=1.21 {
     /*public static final MapCodec<SetPlushieFunction> CODEC = RecordCodecBuilder.mapCodec(instance ->
             commonFields(instance)
                     .and(ResourceLocation.CODEC.fieldOf("id").forGetter(function -> function.plushieId))
@@ -53,18 +36,10 @@ public class SetPlushieFunction extends LootItemConditionalFunction {
     );
 
     *///?}
-    //? if >=26.2 {
-    /*private final Identifier plushieId;
-    *///?} else
     private final ResourceLocation plushieId;
 
     //? if >=26.3 {
-    /*protected SetPlushieFunction(java.util.Optional<Holder<LootItemCondition>> predicates, Identifier plushieId) {
-        super(predicates);
-        this.plushieId = plushieId;
-    }
-    *///?} else if >=26.2 {
-    /*protected SetPlushieFunction(List<LootItemCondition> predicates, Identifier plushieId) {
+    /*protected SetPlushieFunction(java.util.Optional<Holder<LootItemCondition>> predicates, ResourceLocation plushieId) {
         super(predicates);
         this.plushieId = plushieId;
     }

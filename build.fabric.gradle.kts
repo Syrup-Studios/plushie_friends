@@ -1,19 +1,20 @@
 plugins {
-    id("fabric-loom") version "1.17.21"
-    id("maven-publish")
+    id("dev.kikugie.loom-back-compat")
+    id("me.modmuss50.mod-publish-plugin")
+    `maven-publish`
 }
 
-val minecraftVersion = property("deps.minecraft") as String
+val minecraftVersion = stonecutter.current.version
+val requiredJava: JavaVersion = when {
+    stonecutter.current.parsed >= "26.1" -> JavaVersion.VERSION_25
+    stonecutter.current.parsed >= "1.20.5" -> JavaVersion.VERSION_21
+    else -> JavaVersion.VERSION_17
+}
+val compatibleVersions = stonecutter.properties.rawOrNull("mod.mc_releases")
+    ?.asList().orEmpty().map { it.toString() }
 
 version = "${property("mod.version")}+$minecraftVersion-fabric"
 base.archivesName = property("mod.id") as String
-
-val targetJavaVersion = when {
-    stonecutter.eval(stonecutter.current.version, ">=26.2") -> 25
-    stonecutter.eval(stonecutter.current.version, ">=1.20.5") -> 21
-    else -> 17
-}
-val requiredJava = JavaVersion.toVersion(targetJavaVersion)
 
 repositories {
     fun strictMaven(url: String, alias: String, vararg groups: String) = exclusiveContent {
@@ -26,7 +27,7 @@ repositories {
 
 dependencies {
     minecraft("com.mojang:minecraft:$minecraftVersion")
-    mappings(loom.officialMojangMappings())
+    loomx.applyMojangMappings()
 
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
@@ -39,9 +40,11 @@ loom {
         options.put("mark-corresponding-synthetics", "1") // Adds names to lambdas - useful for mixins
     }
 
-    runConfigs.all {
-        vmArgs("-Dmixin.debug.export=true") // Exports transformed classes for debugging
-        runDir = "../../run" // Shares the run directory between versions
+    runConfigs.configureEach {
+        preferGradleTask = true
+        generateRunConfig = true
+        runDirectory = rootProject.file("run")
+        jvmArguments.add("-Dmixin.debug.export=true")
     }
 }
 
@@ -52,15 +55,15 @@ java {
 
     toolchain {
         vendor = JvmVendorSpec.ADOPTIUM
-        languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+        languageVersion = JavaLanguageVersion.of(requiredJava.majorVersion)
     }
 }
 
 tasks {
     processResources {
         val props = mapOf(
-            "version" to project.version,
-            "mc" to project.property("deps.minecraft"),
+            "version" to project.property("mod.version"),
+            "mc" to project.property("mod.fabric_mc_range"),
 
             "modName" to project.property("mod.name"),
             "modId" to project.property("mod.id"),
@@ -73,14 +76,14 @@ tasks {
 
             "fl" to project.property("deps.fabric_loader"),
             "fapi" to project.property("deps.fabric_api"),
-            "java" to targetJavaVersion,
+            "java" to requiredJava.majorVersion,
         )
 
         inputs.properties(props)
 
         filesMatching("fabric.mod.json") { expand(props) }
 
-        val mixinJava = "JAVA_$targetJavaVersion"
+        val mixinJava = "JAVA_${requiredJava.majorVersion}"
         filesMatching("*.mixins.json") { expand("java" to mixinJava) }
         exclude("META-INF/neoforge.mods.toml", "META-INF/mods.toml")
         if (stonecutter.eval(stonecutter.current.version, ">=1.21")) {
@@ -97,13 +100,42 @@ tasks {
     register<Copy>("buildAndCollect") {
         group = "build"
 
-        from(project.tasks.named("remapJar"), project.tasks.named("sourcesJar"))
+        from(loomx.modJar.flatMap { it.archiveFile }, loomx.modSourcesJar.flatMap { it.archiveFile })
         into(rootProject.layout.buildDirectory.file("libs/${project.property("mod.version")}"))
-        dependsOn("build")
     }
 }
 
 tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
-    options.release.set(targetJavaVersion)
+    options.release.set(requiredJava.majorVersion.toInt())
+}
+
+val outputFile = loomx.modJar.flatMap { it.archiveFile }
+val changelogText = providers.fileContents(rootProject.layout.projectDirectory.file("CHANGELOG.md")).asText
+val curseForgeToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+val modrinthToken = providers.environmentVariable("MODRINTH_TOKEN")
+
+publishMods {
+    file.set(outputFile)
+    dryRun = curseForgeToken.isPresent.not() || modrinthToken.isPresent.not()
+    version = project.version.toString()
+    displayName = "${property("mod.name")} ${property("mod.version")} - Fabric ${minecraftVersion}"
+    changelog = changelogText
+    type = STABLE
+    modLoaders.add("fabric")
+    curseforge {
+        projectId = property("publish.curseforge").toString()
+        accessToken = curseForgeToken
+        compatibleVersions.forEach { minecraftVersions.add(it) }
+        client = true
+        server = true
+        requires("fabric-api")
+    }
+    modrinth {
+        projectId = property("publish.modrinth").toString()
+        accessToken = modrinthToken
+        compatibleVersions.forEach { minecraftVersions.add(it) }
+        environment = CLIENT_AND_SERVER
+        requires("fabric-api")
+    }
 }

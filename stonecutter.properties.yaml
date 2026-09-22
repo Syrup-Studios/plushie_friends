@@ -1,0 +1,58 @@
+mod:
+  id: "plushie_friends"
+  name: "Plushie Friends"
+  group: "net.syrupstudios"
+  version: "1.0.0"
+  description: "A plushie mod that allows you to add anybody's skin as a plushie."
+  authors: "SodaSyrup"
+  license: "RSL-1.0"
+  homepage: "https://wiki.thesalad.bar/mods/plushie_friends/"
+  issues: "https://github.com/Syrup-Studios/plushie_friends/issues"
+  sources: "https://github.com/Syrup-Studios/plushie_friends"
+
+publish:
+  modrinth: "dcPq78Za"
+  curseforge: "1545772"
+
+loomx.loom_version: "1.17.21"
+
+"1.20.1":
+  mod.mc_releases: ["1.20.1"]
+  mod.fabric_mc_range: "1.20.1"
+
+"1.21.1":
+  mod.mc_releases: ["1.21.1"]
+  mod.fabric_mc_range: "1.21.1"
+  mod.neoforge_mc_range: "[1.21.1]"
+
+"26.2":
+  mod.mc_releases: ["26.2"]
+  mod.fabric_mc_range: "26.2"
+  mod.neoforge_mc_range: "[26.2]"
+
+"26.3":
+  mod.mc_releases: ["26.3"]
+  mod.fabric_mc_range: "26.3"
+  mod.neoforge_mc_range: "[26.3]"
+
+fabric:deps:
+  "1.20.1":
+    fabric_loader: "0.19.2"
+    fabric_api: "0.92.9+1.20.1"
+  "1.21.1":
+    fabric_loader: "0.19.2"
+    fabric_api: "0.116.12+1.21.1"
+  "26.2":
+    fabric_loader: "0.19.3"
+    fabric_api: "0.160.0+26.2"
+  "26.3":
+    fabric_loader: "0.19.5"
+    fabric_api: "0.160.7+26.3"
+
+neoforge:deps:
+  "1.21.1":
+    neoforge: "21.1.209"
+  "26.2":
+    neoforge: "26.2.0.88"
+  "26.3":
+    neoforge: "26.3.0.3-beta"

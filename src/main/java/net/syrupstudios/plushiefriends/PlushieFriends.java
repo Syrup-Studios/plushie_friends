@@ -1,23 +1,17 @@
 package net.syrupstudios.plushiefriends;
 
+import net.minecraft.resources.ResourceLocation;
 //? if >=26 {
-/*import net.minecraft.resources.Identifier;
-import net.minecraft.core.registries.Registries;
+/*import net.minecraft.core.registries.Registries;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
-*///?} else if >=1.21 {
-/*import net.minecraft.resources.ResourceLocation;
-*///?} else {
-import net.minecraft.resources.ResourceLocation;
-//?}
+*///?}
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-//? if >=26 {
-/*import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
-*///?} else {
+//? if <26 {
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 //?}
 import net.syrupstudios.plushiefriends.block.DynamicPlushieBlock;
@@ -103,11 +97,7 @@ public final class PlushieFriends {
         createSetPlushieFunction();
     }
 
-    //? if >=26 {
-    /*public static Identifier id(String path) {
-        return Identifier.fromNamespaceAndPath(MOD_ID, path);
-    }
-    *///?} else if >=1.21 {
+    //? if >=1.21 {
     /*public static ResourceLocation id(String path) {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }

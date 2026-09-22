@@ -1,11 +1,12 @@
-import org.gradle.language.jvm.tasks.ProcessResources
-
 plugins {
-    id("net.neoforged.moddev") version "2.0.147"
-    id("maven-publish")
+    id("net.neoforged.moddev")
+    id("neoforge-mutex")
+    id("me.modmuss50.mod-publish-plugin")
+    `maven-publish`
 }
 
-val minecraftVersion = property("deps.minecraft") as String
+val minecraftVersion = stonecutter.current.version
+val minecraftRange = property("mod.neoforge_mc_range") as String
 val neoForgeVersion = property("deps.neoforge") as String
 val targetJavaVersion = if (stonecutter.eval(stonecutter.current.version, ">=26.2")) 25 else 21
 
@@ -35,7 +36,10 @@ neoForge {
 
 java {
     withSourcesJar()
-    toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    toolchain {
+        vendor = JvmVendorSpec.ADOPTIUM
+        languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
     sourceCompatibility = JavaVersion.toVersion(targetJavaVersion)
     targetCompatibility = JavaVersion.toVersion(targetJavaVersion)
 }
@@ -47,8 +51,8 @@ tasks.withType<JavaCompile>().configureEach {
 
 tasks.named<ProcessResources>("processResources") {
     val props = mapOf(
-        "version" to project.version.toString(),
-        "mc" to minecraftVersion,
+        "version" to project.property("mod.version").toString(),
+        "mc" to minecraftRange,
         "neoforge" to neoForgeVersion,
         "modName" to project.property("mod.name").toString(),
         "modId" to project.property("mod.id").toString(),
@@ -64,7 +68,7 @@ tasks.named<ProcessResources>("processResources") {
     filesMatching("META-INF/neoforge.mods.toml") { expand(props) }
     filesMatching("*.mixins.json") { expand("java" to mixinJava) }
     exclude("fabric.mod.json", "META-INF/mods.toml", "data/*/loot_tables/**")
-    if ((props["mc"] as String).startsWith("1.")) {
+    if (minecraftVersion.startsWith("1.")) {
         exclude("assets/*/items/**")
     }
 }
@@ -75,7 +79,36 @@ tasks.named("createMinecraftArtifacts") {
 
 tasks.register<Copy>("buildAndCollect") {
     group = "build"
-    from(tasks.named("jar"), tasks.named("sourcesJar"))
+    from(tasks.named<Jar>("jar").flatMap { it.archiveFile }, tasks.named<Jar>("sourcesJar").flatMap { it.archiveFile })
     into(rootProject.layout.buildDirectory.file("libs/${project.property("mod.version")}"))
-    dependsOn("build")
+}
+
+val compatibleVersions = stonecutter.properties.rawOrNull("mod.mc_releases")
+    ?.asList().orEmpty().map { it.toString() }
+val outputFile = tasks.named<org.gradle.jvm.tasks.Jar>("jar").flatMap { it.archiveFile }
+val changelogText = providers.fileContents(rootProject.layout.projectDirectory.file("CHANGELOG.md")).asText
+val curseForgeToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+val modrinthToken = providers.environmentVariable("MODRINTH_TOKEN")
+
+publishMods {
+    file.set(outputFile)
+    dryRun = curseForgeToken.isPresent.not() || modrinthToken.isPresent.not()
+    version = project.version.toString()
+    displayName = "${property("mod.name")} ${property("mod.version")} - Neoforge ${minecraftVersion}"
+    changelog = changelogText
+    type = STABLE
+    modLoaders.add("neoforge")
+    curseforge {
+        projectId = property("publish.curseforge").toString()
+        accessToken = curseForgeToken
+        compatibleVersions.forEach { minecraftVersions.add(it) }
+        client = true
+        server = true
+    }
+    modrinth {
+        projectId = property("publish.modrinth").toString()
+        accessToken = modrinthToken
+        compatibleVersions.forEach { minecraftVersions.add(it) }
+        environment = CLIENT_AND_SERVER
+    }
 }

@@ -9,17 +9,9 @@ import com.google.gson.JsonObject;
 /*import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.resources.FileToIdConverter;
-import net.minecraft.resources.Identifier;
-*///?} else
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+*///?}
 //? if fabric
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
-//? if >=26.2 {
-/*import net.minecraft.resources.Identifier;
-*///?} else
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -40,9 +32,6 @@ public class PlushieDataManager extends SimpleJsonResourceReloadListener
         implements IdentifiableResourceReloadListener
 {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-    //? if >=26.2 {
-    /*private static final Map<Identifier, PlushieDefinition> PLUSHIES = new HashMap<>();
-    *///?} else
     private static final Map<ResourceLocation, PlushieDefinition> PLUSHIES = new HashMap<>();
 
     public PlushieDataManager() {
@@ -54,7 +43,7 @@ public class PlushieDataManager extends SimpleJsonResourceReloadListener
 
     @Override
     //? if >=26.2 {
-    /*protected void apply(Map<Identifier, PlushieDefinition> prepared, ResourceManager resourceManager, ProfilerFiller profiler) {
+    /*protected void apply(Map<ResourceLocation, PlushieDefinition> prepared, ResourceManager resourceManager, ProfilerFiller profiler) {
         PLUSHIES.clear();
         PlushieProfileManager.clearCache();
         PLUSHIES.putAll(prepared);
@@ -86,15 +75,11 @@ public class PlushieDataManager extends SimpleJsonResourceReloadListener
 
     //? if fabric {
     @Override
-    //? if >=26.2 {
-    /*public Identifier getFabricId() { *///?} else
     public ResourceLocation getFabricId() {
         return PlushieFriends.id("plushies");
     }
     //?}
 
-    //? if >=26.2 {
-    /*public static PlushieDefinition get(Identifier id) { *///?} else
     public static PlushieDefinition get(ResourceLocation id) {
         return PLUSHIES.get(id);
     }

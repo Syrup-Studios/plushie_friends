@@ -1,9 +1,10 @@
 package net.syrupstudios.plushiefriends.util;
 
 import com.mojang.authlib.GameProfile;
-//? if >=26.2
+//? if >=26.2 {
 /*import com.google.common.collect.ImmutableMultimap;
-import com.mojang.authlib.properties.PropertyMap;*/
+import com.mojang.authlib.properties.PropertyMap;
+*///?}
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;

@@ -11,17 +11,19 @@ import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 //? if <26.2
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
-//? if >=26.2
+//? if >=26.2 {
 /*import net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry;
-import net.minecraft.client.renderer.special.SpecialModelRenderers;*/
+import net.minecraft.client.renderer.special.SpecialModelRenderers;
+*///?}
 //?} else if neoforge {
 /*import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 *///?}
-//? if neoforge && >=26.2
-/*import net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent;*/
+//? if neoforge && >=26.2 {
+/*import net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent;
+*///?}
 import net.minecraft.client.Minecraft;
 //? if <26.2
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -50,14 +52,15 @@ public final class PlushieFriendsClient
     //? if fabric {
     @Override
     public void onInitializeClient() {
-        //? if >=26.2
+        //? if >=26.2 {
         /*ModelLayerRegistry.registerModelLayer(
                 DynamicPlushieBlockEntityRenderer.LAYER_LOCATION,
                 PlushieModel::createLayer
         );
         SpecialModelRenderers.ID_MAPPER.put(
                 PlushieFriends.id("plushie"), PlushieSpecialRenderer.Unbaked.MAP_CODEC
-        );*/
+        );
+        *///?}
         //? if <26.2
         EntityModelLayerRegistry.registerModelLayer(DynamicPlushieBlockEntityRenderer.LAYER_LOCATION, PlushieModel::createLayer);
         BlockEntityRendererRegistry.register(
@@ -82,11 +85,12 @@ public final class PlushieFriendsClient
     }
     *///?}
 
-    //? if neoforge && >=26.2
+    //? if neoforge && >=26.2 {
     /*@SubscribeEvent
     public static void registerSpecialModelRenderer(RegisterSpecialModelRendererEvent event) {
         event.register(PlushieFriends.id("plushie"), PlushieSpecialRenderer.Unbaked.MAP_CODEC);
-    }*/
+    }
+    *///?}
 
     //? if <26.2 {
     public static void renderItem(
