@@ -36,11 +36,10 @@ loomx.loom_version: "1.17.21"
   mod.neoforge_mc_range: "[26.3]"
 
 fabric:deps:
+  fabric_loader: "0.19.2"
   "1.20.1":
-    fabric_loader: "0.19.2"
     fabric_api: "0.92.9+1.20.1"
   "1.21.1":
-    fabric_loader: "0.19.2"
     fabric_api: "0.116.12+1.21.1"
   "26.2":
     fabric_loader: "0.19.3"

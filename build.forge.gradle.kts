@@ -2,7 +2,6 @@ plugins {
     id("net.minecraftforge.gradle") version ("6.0.46")
     id("org.spongepowered.mixin") version ("0.7.+")
     id("org.parchmentmc.librarian.forgegradle") version ("1.+")
-    id("maven-publish")
 }
 
 version = "${property("mod.version")}+${property("deps.minecraft")}-forge"
