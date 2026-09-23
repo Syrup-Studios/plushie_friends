@@ -37,7 +37,7 @@ import net.syrupstudios.plushiefriends.client.renderer.DynamicPlushieBlockEntity
 import net.syrupstudios.plushiefriends.client.renderer.PlushieModel;
 import net.syrupstudios.plushiefriends.item.PlushieItemData;
 import net.syrupstudios.plushiefriends.util.PlushieNbtHelper;
-import net.syrupstudios.plushiefriends.util.PlushieProfileManager;
+import net.syrupstudios.syruplibrary.profile.SyrupProfiles;
 
 //? if neoforge && <26.2
 /*@EventBusSubscriber(modid = PlushieFriends.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)*/
@@ -111,7 +111,7 @@ public final class PlushieFriendsClient
         CompoundTag tag = PlushieItemData.read(stack);
         GameProfile owner = PlushieNbtHelper.getOwnerFromRoot(tag);
         if (owner != null && !owner.getProperties().containsKey("textures")) {
-            GameProfile cached = PlushieProfileManager.getCachedProfile(owner.getName());
+            GameProfile cached = SyrupProfiles.getCachedProfile(owner.getName());
             if (cached != null && cached.getProperties().containsKey("textures")) {
                 owner = cached;
             }

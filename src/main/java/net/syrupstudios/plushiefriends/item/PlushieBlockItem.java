@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.syrupstudios.plushiefriends.block.entity.DynamicPlushieBlockEntity;
 import net.syrupstudios.plushiefriends.util.PlushieNbtHelper;
-import net.syrupstudios.plushiefriends.util.PlushieProfileManager;
+import net.syrupstudios.syruplibrary.profile.SyrupProfiles;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -106,11 +106,11 @@ public final class PlushieBlockItem extends BlockItem {
             return;
         }
 
-        GameProfile cached = PlushieProfileManager.getCachedProfile(owner.name());
+        GameProfile cached = SyrupProfiles.getCachedProfile(owner.name());
         if (cached != null && cached.properties().containsKey("textures")) {
             PlushieItemData.update(stack, data -> PlushieNbtHelper.writeOwnerToBlockEntityTag(data, cached));
-        } else if (PlushieProfileManager.shouldAttemptResolution(owner.name())) {
-            PlushieProfileManager.resolveProfileAsync(owner.name(), profile -> {});
+        } else if (SyrupProfiles.shouldAttemptResolution(owner.name())) {
+            SyrupProfiles.resolveProfileAsync(owner.name(), profile -> {});
         }
     }
 
@@ -129,11 +129,11 @@ public final class PlushieBlockItem extends BlockItem {
             return;
         }
 
-        GameProfile cached = PlushieProfileManager.getCachedProfile(owner.getName());
+        GameProfile cached = SyrupProfiles.getCachedProfile(owner.getName());
         if (cached != null && cached.getProperties().containsKey("textures")) {
             PlushieItemData.update(stack, data -> PlushieNbtHelper.writeOwnerToBlockEntityTag(data, cached));
-        } else if (PlushieProfileManager.shouldAttemptResolution(owner.getName())) {
-            PlushieProfileManager.resolveProfileAsync(owner.getName(), profile -> {});
+        } else if (SyrupProfiles.shouldAttemptResolution(owner.getName())) {
+            SyrupProfiles.resolveProfileAsync(owner.getName(), profile -> {});
         }
     }
 
@@ -184,7 +184,7 @@ public final class PlushieBlockItem extends BlockItem {
         if (owner == null || owner.name() == null || owner.properties().containsKey("textures")) {
             return;
         }
-        GameProfile cached = PlushieProfileManager.getCachedProfile(owner.name());
+        GameProfile cached = SyrupProfiles.getCachedProfile(owner.name());
         if (cached != null && cached.properties().containsKey("textures")) {
             plushie.setOwner(cached);
         }
@@ -195,7 +195,7 @@ public final class PlushieBlockItem extends BlockItem {
         if (owner == null || owner.getName() == null || owner.getProperties().containsKey("textures")) {
             return;
         }
-        GameProfile cached = PlushieProfileManager.getCachedProfile(owner.getName());
+        GameProfile cached = SyrupProfiles.getCachedProfile(owner.getName());
         if (cached != null && cached.getProperties().containsKey("textures")) {
             plushie.setOwner(cached);
         }

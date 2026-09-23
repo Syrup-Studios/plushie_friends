@@ -4,6 +4,8 @@ plugins {
 }
 
 val minecraftVersion = stonecutter.current.version
+val syrupLibraryVersion = "${property("deps.syrup_library")}+$minecraftVersion-fabric"
+val syrupLibraryCoordinate = "net.syrupstudios:syrup_library:$syrupLibraryVersion"
 val requiredJava: JavaVersion = when {
     stonecutter.current.parsed >= "26.1" -> JavaVersion.VERSION_25
     stonecutter.current.parsed >= "1.20.5" -> JavaVersion.VERSION_21
@@ -24,6 +26,7 @@ repositories {
     }
     strictMaven("https://www.cursemaven.com", "CurseForge", "curse.maven")
     strictMaven("https://api.modrinth.com/maven", "Modrinth", "maven.modrinth")
+    maven("https://maven.syrupstudios.net/releases/")
 }
 
 dependencies {
@@ -32,6 +35,7 @@ dependencies {
 
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
+    modImplementation(syrupLibraryCoordinate)
 }
 
 loom {
@@ -81,6 +85,7 @@ tasks {
             register("sources", "mod.sources")
             register("fl", "deps.fabric_loader")
             register("fapi", "deps.fabric_api")
+            register("syrupLibrary", "deps.syrup_library")
             inputs.property("java", requiredJava.majorVersion)
             set("java", requiredJava.majorVersion)
         }
@@ -134,6 +139,7 @@ publishMods {
         client = true
         server = true
         requires("fabric-api")
+        requires("syrup-library")
     }
     modrinth {
         projectId = property("publish.modrinth").toString()
@@ -141,5 +147,6 @@ publishMods {
         compatibleVersions.forEach { minecraftVersions.add(it) }
         environment = CLIENT_OR_SERVER
         requires("fabric-api")
+        requires("syrup-library")
     }
 }

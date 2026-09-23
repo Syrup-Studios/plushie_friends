@@ -12,6 +12,7 @@ import net.syrupstudios.plushiefriends.PlushieFriends;
 import net.syrupstudios.plushiefriends.data.PlushieDataManager;
 import net.syrupstudios.plushiefriends.client.PlushieFriendsClient;
 import net.syrupstudios.plushiefriends.util.PlushieProfileManager;
+import net.syrupstudios.syruplibrary.profile.SyrupProfiles;
 
 /**
  * Fabric's entry point for both the common and client initialization phases.
@@ -36,7 +37,7 @@ public final class FabricEntrypoint implements ModInitializer, ClientModInitiali
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new PlushieDataManager());
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             //? if >=26.2 {
-            /*PlushieProfileManager.setProfileResolver(server);*///?}
+            /*SyrupProfiles.setProfileResolver(server);*///?}
             PlushieDataManager.preloadProfiles();
         });
         ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, manager, success) -> {
@@ -46,7 +47,8 @@ public final class FabricEntrypoint implements ModInitializer, ClientModInitiali
         });
         ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
             //? if >=26.2 {
-            /*PlushieProfileManager.setProfileResolver(null);*///?}
+            /*SyrupProfiles.setProfileResolver(null);*///?}
+            SyrupProfiles.clearCache();
             PlushieProfileManager.clearCache();
         });
         PlushieFriends.initialized("Fabric");

@@ -19,6 +19,7 @@ import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.syrupstudios.plushiefriends.PlushieFriends;
 import net.syrupstudios.plushiefriends.util.PlushieProfileManager;
+import net.syrupstudios.syruplibrary.profile.SyrupProfiles;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
@@ -45,12 +46,14 @@ public class PlushieDataManager extends SimpleJsonResourceReloadListener
     //? if >=26.2 {
     /*protected void apply(Map<ResourceLocation, PlushieDefinition> prepared, ResourceManager resourceManager, ProfilerFiller profiler) {
         PLUSHIES.clear();
+        SyrupProfiles.clearCache();
         PlushieProfileManager.clearCache();
         PLUSHIES.putAll(prepared);
         PlushieFriends.LOGGER.info("Loaded {} plushie data pack definitions.", PLUSHIES.size());
     }*///?} else {
     protected void apply(Map<ResourceLocation, JsonElement> prepared, ResourceManager resourceManager, ProfilerFiller profiler) {
         PLUSHIES.clear();
+        SyrupProfiles.clearCache();
         PlushieProfileManager.clearCache();
 
         prepared.forEach((id, jsonElement) -> {
@@ -88,11 +91,11 @@ public class PlushieDataManager extends SimpleJsonResourceReloadListener
         PLUSHIES.values().stream()
                 .map(PlushieDefinition::ownerName)
                 .distinct()
-                .forEach(PlushieProfileManager::preloadOwner);
+                .forEach(SyrupProfiles::preload);
     }
 
     public static GameProfile getResolvedProfile(String ownerName, MinecraftServer server) {
-        return PlushieProfileManager.getOrResolveServerProfile(ownerName, server);
+        return SyrupProfiles.getOrResolveServerProfile(ownerName, server);
     }
 
     public record PlushieDefinition(String ownerName, List<String> lore) {

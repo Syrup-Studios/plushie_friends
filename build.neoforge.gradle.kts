@@ -5,6 +5,8 @@ plugins {
 }
 
 val minecraftVersion = stonecutter.current.version
+val syrupLibraryVersion = "${property("deps.syrup_library")}+$minecraftVersion-neoforge"
+val syrupLibraryCoordinate = "net.syrupstudios:syrup_library:$syrupLibraryVersion"
 val neoForgeVersion = property("deps.neoforge") as String
 val requiredJava: JavaVersion = when {
     stonecutter.current.parsed >= "26.1" -> JavaVersion.VERSION_25
@@ -17,6 +19,10 @@ val requiredJava: JavaVersion = when {
 version = "${property("mod.version")}+$minecraftVersion-neoforge"
 group = property("mod.group") as String
 base.archivesName = property("mod.id") as String
+
+repositories {
+    maven("https://maven.syrupstudios.net/releases/")
+}
 
 neoForge {
     version = neoForgeVersion
@@ -35,6 +41,10 @@ neoForge {
     mods.create(property("mod.id") as String) {
         sourceSet(sourceSets.main.get())
     }
+}
+
+dependencies {
+    implementation(syrupLibraryCoordinate)
 }
 
 java {
@@ -72,6 +82,7 @@ tasks {
             register("homepage", "mod.homepage")
             register("issues", "mod.issues")
             register("sources", "mod.sources")
+            register("syrupLibrary", "deps.syrup_library")
         }
         val mixinJava = "JAVA_${requiredJava.majorVersion}"
         filesMatching("META-INF/neoforge.mods.toml") { expand(props) }
@@ -116,11 +127,13 @@ publishMods {
         compatibleVersions.forEach { minecraftVersions.add(it) }
         client = true
         server = true
+        requires("syrup-library")
     }
     modrinth {
         projectId = property("publish.modrinth").toString()
         accessToken = modrinthToken
         compatibleVersions.forEach { minecraftVersions.add(it) }
         environment = CLIENT_OR_SERVER
+        requires("syrup-library")
     }
 }

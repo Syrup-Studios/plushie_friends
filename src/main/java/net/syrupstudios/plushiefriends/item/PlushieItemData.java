@@ -3,26 +3,36 @@ package net.syrupstudios.plushiefriends.item;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.syrupstudios.plushiefriends.util.PlushieNbtHelper;
+import net.syrupstudios.syruplibrary.item.ItemStackData;
 
 import java.util.function.Consumer;
 
 //? if >=1.21 {
 /*import net.minecraft.core.component.DataComponents;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ResolvableProfile;
 *///?}
 
-/**
- * Adapts the version-specific item storage format to one logical NBT compound.
- */
+/** Adapts Plushie Friends' legacy fields to the library's custom item data. */
 public final class PlushieItemData {
-    private PlushieItemData() {
-    }
+    private PlushieItemData() {}
 
     public static CompoundTag read(ItemStack stack) {
+        CompoundTag result = ItemStackData.read(stack);
+        mergeLegacy(stack, result);
+        return result;
+    }
+
+    public static void update(ItemStack stack, Consumer<CompoundTag> updater) {
+        ItemStackData.update(stack, data -> {
+            mergeLegacy(stack, data);
+            updater.accept(data);
+            PlushieNbtHelper.migrateLegacyItemData(data);
+        });
+    }
+
+    private static void mergeLegacy(ItemStack stack, CompoundTag result) {
         //? if >=26.2 {
-        /*CompoundTag result = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        var blockData = stack.get(DataComponents.BLOCK_ENTITY_DATA);
+        /*var blockData = stack.get(DataComponents.BLOCK_ENTITY_DATA);
         CompoundTag legacy = blockData == null ? new CompoundTag() : blockData.copyTagWithoutId();
         copyMissingField(result, legacy, PlushieNbtHelper.PLUSHIE_OWNER);
         copyMissingField(result, legacy, PlushieNbtHelper.PLUSHIE_LORE);
@@ -30,37 +40,15 @@ public final class PlushieItemData {
         if (!result.contains(PlushieNbtHelper.PLUSHIE_OWNER) && profile != null) {
             PlushieNbtHelper.writeOwnerToBlockEntityTag(result, profile.partialProfile());
         }
-        return result;
         *///?} else if >=1.21 {
-        /*CompoundTag result = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        CompoundTag legacy = stack.getOrDefault(DataComponents.BLOCK_ENTITY_DATA, CustomData.EMPTY).copyTag();
+        /*CompoundTag legacy = stack.getOrDefault(DataComponents.BLOCK_ENTITY_DATA, net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
         copyMissingField(result, legacy, PlushieNbtHelper.PLUSHIE_OWNER);
         copyMissingField(result, legacy, PlushieNbtHelper.PLUSHIE_LORE);
         ResolvableProfile profile = stack.get(DataComponents.PROFILE);
         if (!result.contains(PlushieNbtHelper.PLUSHIE_OWNER) && profile != null) {
             PlushieNbtHelper.writeOwnerToBlockEntityTag(result, profile.gameProfile());
         }
-        return result;
-        *///?} else {
-        CompoundTag tag = stack.getTag();
-        return tag == null ? new CompoundTag() : tag.copy();
-        //?}
-    }
-
-    public static void update(ItemStack stack, Consumer<CompoundTag> updater) {
-        CompoundTag tag = read(stack);
-        updater.accept(tag);
-        PlushieNbtHelper.migrateLegacyItemData(tag);
-
-        //? if >=1.21 {
-        /*CustomData.set(DataComponents.CUSTOM_DATA, stack, tag);
-        *///?} else {
-        stack.setTag(tag);
-        //?}
-    }
-
-    public static boolean hasData(ItemStack stack) {
-        return !read(stack).isEmpty();
+        *///?}
     }
 
     private static void copyMissingField(CompoundTag target, CompoundTag source, String field) {

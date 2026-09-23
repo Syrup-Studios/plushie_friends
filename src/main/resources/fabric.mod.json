@@ -30,6 +30,7 @@
 		"fabricloader": ">=${fl}",
 		"minecraft": "${mc}",
 		"fabric-api": ">=${fapi}",
+		"syrup_library": ">=${syrupLibrary}",
 		"java": ">=${java}"
 	}
 }

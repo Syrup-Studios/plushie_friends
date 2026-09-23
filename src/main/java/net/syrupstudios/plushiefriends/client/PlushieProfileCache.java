@@ -11,6 +11,7 @@ import net.minecraft.world.entity.player.PlayerModelType;
 import net.minecraft.world.item.component.ResolvableProfile;
 *///?}
 import net.syrupstudios.plushiefriends.util.PlushieProfileManager;
+import net.syrupstudios.syruplibrary.profile.SyrupProfiles;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -85,7 +86,7 @@ public final class PlushieProfileCache {
         /*String name = profile.name();
         *///?} else
         String name = profile.getName();
-        GameProfile cached = name == null ? null : PlushieProfileManager.getCachedProfile(name);
+        GameProfile cached = name == null ? null : SyrupProfiles.getCachedProfile(name);
         return cached != null && hasTextures(cached) ? cached : profile;
     }
 

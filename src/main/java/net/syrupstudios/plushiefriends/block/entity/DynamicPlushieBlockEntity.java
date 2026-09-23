@@ -12,7 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.syrupstudios.plushiefriends.util.PlushieNbtHelper;
-import net.syrupstudios.plushiefriends.util.PlushieProfileManager;
+import net.syrupstudios.syruplibrary.profile.SyrupProfiles;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -160,7 +160,7 @@ public class DynamicPlushieBlockEntity extends BlockEntity {
             return;
         }
 
-        GameProfile cachedProfile = PlushieProfileManager.getCachedProfile(blockEntity.owner.name());
+        GameProfile cachedProfile = SyrupProfiles.getCachedProfile(blockEntity.owner.name());
         if (cachedProfile != null && cachedProfile.properties().containsKey("textures")) {
             blockEntity.owner = cachedProfile;
             blockEntity.setChanged();
@@ -168,10 +168,10 @@ public class DynamicPlushieBlockEntity extends BlockEntity {
             return;
         }
 
-        if (!blockEntity.isResolving && PlushieProfileManager.shouldAttemptResolution(blockEntity.owner.name())) {
+        if (!blockEntity.isResolving && SyrupProfiles.shouldAttemptResolution(blockEntity.owner.name())) {
             blockEntity.isResolving = true;
 
-            PlushieProfileManager.resolveProfileAsync(blockEntity.owner.name(), profile -> {
+            SyrupProfiles.resolveProfileAsync(blockEntity.owner.name(), profile -> {
                 Runnable applyResult = () -> {
                     if (profile != null) {
                         blockEntity.owner = profile;
@@ -194,7 +194,7 @@ public class DynamicPlushieBlockEntity extends BlockEntity {
             return;
         }
 
-        GameProfile cachedProfile = PlushieProfileManager.getCachedProfile(blockEntity.owner.getName());
+        GameProfile cachedProfile = SyrupProfiles.getCachedProfile(blockEntity.owner.getName());
         if (cachedProfile != null && cachedProfile.getProperties().containsKey("textures")) {
             blockEntity.owner = cachedProfile;
             blockEntity.setChanged();
@@ -202,10 +202,10 @@ public class DynamicPlushieBlockEntity extends BlockEntity {
             return;
         }
 
-        if (!blockEntity.isResolving && PlushieProfileManager.shouldAttemptResolution(blockEntity.owner.getName())) {
+        if (!blockEntity.isResolving && SyrupProfiles.shouldAttemptResolution(blockEntity.owner.getName())) {
             blockEntity.isResolving = true;
 
-            PlushieProfileManager.resolveProfileAsync(blockEntity.owner.getName(), profile -> {
+            SyrupProfiles.resolveProfileAsync(blockEntity.owner.getName(), profile -> {
                 Runnable applyResult = () -> {
                     if (profile != null) {
                         blockEntity.owner = profile;

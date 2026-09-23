@@ -2,13 +2,16 @@ mod:
   id: "plushie_friends"
   name: "Plushie Friends"
   group: "net.syrupstudios"
-  version: "1.0.0"
+  version: "1.0.1"
   description: "A plushie mod that allows you to add anybody's skin as a plushie."
   authors: "SodaSyrup"
   license: "RSL-1.0"
   homepage: "https://wiki.thesalad.bar/mods/plushie_friends/"
   issues: "https://github.com/Syrup-Studios/plushie_friends/issues"
   sources: "https://github.com/Syrup-Studios/plushie_friends"
+
+deps:
+  syrup_library: "0.4.0"
 
 publish:
   modrinth: "dcPq78Za"

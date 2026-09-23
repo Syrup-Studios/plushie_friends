@@ -11,6 +11,7 @@ import net.neoforged.neoforge.registries.RegisterEvent;
 import net.syrupstudios.plushiefriends.PlushieFriends;
 import net.syrupstudios.plushiefriends.data.PlushieDataManager;
 import net.syrupstudios.plushiefriends.util.PlushieProfileManager;
+import net.syrupstudios.syruplibrary.profile.SyrupProfiles;
 
 // NeoForge's entry point.
 @Mod(PlushieFriends.MOD_ID)
@@ -52,15 +53,16 @@ public final class NeoForgeEntrypoint {
 
     private void serverStarted(ServerStartedEvent event) {
         //? if >=26.2 {
-        /^PlushieProfileManager.setProfileResolver(event.getServer());
+        /^SyrupProfiles.setProfileResolver(event.getServer());
         ^///?}
         PlushieDataManager.preloadProfiles();
     }
 
     private void serverStopped(ServerStoppedEvent event) {
         //? if >=26.2 {
-        /^PlushieProfileManager.setProfileResolver(null);
+        /^SyrupProfiles.setProfileResolver(null);
         ^///?}
+        SyrupProfiles.clearCache();
         PlushieProfileManager.clearCache();
     }
 }
