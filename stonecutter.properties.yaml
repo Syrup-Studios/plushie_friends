@@ -6,7 +6,7 @@ mod:
   description: "A plushie mod that allows you to add anybody's skin as a plushie."
   authors: "SodaSyrup"
   license: "RSL-1.0"
-  homepage: "https://wiki.thesalad.bar/mods/plushie_friends/"
+  homepage: "https://repodocs.net/en/project/plushie-friends/latest/docs/"
   issues: "https://github.com/Syrup-Studios/plushie_friends/issues"
   sources: "https://github.com/Syrup-Studios/plushie_friends"
 
